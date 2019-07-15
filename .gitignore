@@ -1,0 +1,26 @@
+.cache
+.DS_Store
+.cache
+node_modules/
+dist/
+build/helper/*.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/unit/coverage
+build/helper/build_client_conf.json
+build/helper/build_h5_conf.json
+build/helper/.gitkeep
+config/local.env.js
+releaseConf/
+package-lock.json
+static/vendor.dll.js
+static/common/
+coverage/
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
