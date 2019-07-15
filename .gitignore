@@ -1,9 +1,4 @@
-.cache
 .DS_Store
-.cache
-node_modules/
-dist/
-build/helper
 .idea
 *.iml
 
