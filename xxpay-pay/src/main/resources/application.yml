@@ -12,7 +12,7 @@ spring:
       address: @zookeeper.url@
     protocol:
       name: dubbo
-      port: 20880
+      port: 20881
     scan: org.xxpay.pay
   redis:
     host: @redis.ip@
