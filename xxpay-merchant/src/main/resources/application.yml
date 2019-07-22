@@ -10,6 +10,7 @@ spring:
     application:
       name: xxpay-merchant
     registry:
+      #address: zookeeper://zookeeper:2181
       address: @zookeeper.url@
     scan: org.xxpay.mch
   freemarker:
@@ -29,8 +30,6 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true
-  profiles:
-     active: prod
 
 # JWT
 jwt:

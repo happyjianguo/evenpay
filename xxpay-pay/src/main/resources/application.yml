@@ -12,15 +12,12 @@ spring:
       address: @zookeeper.url@
     protocol:
       name: dubbo
-      port: 20881
+      port: 20880
     scan: org.xxpay.pay
   redis:
-    #host: @redis.ip@
-    host: localhost
-    #password: @redis.pass@
-    password: ''
-    #port: @redis.port@
-    port: 6379
+    host: @redis.ip@
+    password: @redis.pass@
+    port: @redis.port@
     pool:
       max-idle: 100
       min-idle: 1

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+APP_HOME=/home/xxpay/service/xxpay-{{ app }}-{{ version }}
+
+{% if app == 'service' %}
+APP_MAINCLASS=org.xxpay.service.XxPay{{ app | capitalize }}Application
+{% elif app == 'pay' %}
+APP_MAINCLASS=org.xxpay.pay.XxPay{{ app | capitalize }}Application
+{% elif app == 'task' %}
+APP_MAINCLASS=org.xxpay.task.XxPay{{ app | capitalize }}Application
+{% else %}
+APP_MAINCLASS=org.xxpay.XxPay{{ app | capitalize }}Application
+{% endif %}
+
+CLASSPATH=$APP_HOME/classes
+for i in "$APP_HOME"/lib/*.jar; do
+   CLASSPATH="$CLASSPATH":"$i"
+done
+
+JAVA_OPTS="-ms512m -mx512m -Xmn128m -Djava.awt.headless=true -XX:MaxPermSize=64m"
+java $JAVA_OPTS -classpath $CLASSPATH $APP_MAINCLASS 

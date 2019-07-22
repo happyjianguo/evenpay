@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 @ComponentScan(basePackages={"org.xxpay"})
-public class XxPayServiceAppliaction {
+public class XxPayServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(XxPayServiceAppliaction.class, args);
+        SpringApplication.run(XxPayServiceApplication.class, args);
     }
 }

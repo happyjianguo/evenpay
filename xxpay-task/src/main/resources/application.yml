@@ -8,8 +8,6 @@ spring:
     registry:
       address: @zookeeper.url@
     scan: org.xxpay
-  profiles:
-     active: prod
 
   mvc:
     static-path-pattern: /mch_bill_down/**

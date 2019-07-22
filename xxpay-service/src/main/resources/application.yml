@@ -9,13 +9,12 @@ spring:
     application:
       name: xxpay-service
     registry:
+      #address: zookeeper://zookeeper:2181
       address: @zookeeper.url@
     protocol:
       name: dubbo
       port: 20880
     scan: org.xxpay.service.impl
-  profiles:
-     active: prod
 
 logging:
   file: ./log/xxpay-service.log

@@ -11,8 +11,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @ComponentScan(basePackages={"org.xxpay"})
-public class XxPayPayAppliaction {
+public class XxPayPayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(XxPayPayAppliaction.class, args);
+        SpringApplication.run(XxPayPayApplication.class, args);
     }
 }
