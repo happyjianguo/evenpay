@@ -19,7 +19,7 @@ import org.xxpay.pay.channel.hikerpay.util.HikerUtil;
 import java.io.IOException;
 
 /**
- * @author: dingzhiwei
+ * @author: gf
  * @date: 2019/07/19
  * @description: 海科退款
  */
