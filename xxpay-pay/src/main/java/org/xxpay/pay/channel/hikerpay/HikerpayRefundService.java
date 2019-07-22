@@ -12,11 +12,9 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
-import org.xxpay.core.entity.PayOrder;
 import org.xxpay.core.entity.RefundOrder;
 import org.xxpay.pay.channel.BaseRefund;
 import org.xxpay.pay.channel.hikerpay.util.HikerUtil;
-import org.xxpay.pay.channel.swiftpay.SwiftpayConfig;
 
 import java.io.IOException;
 
