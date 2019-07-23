@@ -23,9 +23,9 @@ import java.util.Map;
  * @description: 海科支付回调
  */
 @Service
-public class HikerpayNotifyService extends BasePayNotify {
+public class HikerpayPayNotifyService extends BasePayNotify {
 
-    private static final MyLog _log = MyLog.getLog(HikerpayNotifyService.class);
+    private static final MyLog _log = MyLog.getLog(HikerpayPayNotifyService.class);
 
     @Override
     public String getChannelName() {
@@ -46,7 +46,7 @@ public class HikerpayNotifyService extends BasePayNotify {
             String resString = XmlUtils.parseRequst(req);
             _log.info("[{}]回调通知参数,data={}", getChannelName(), resString);
 
-            if (!StringUtils.isEmpty(respString)) {
+            if (!StringUtils.isEmpty(resString)) {
                 JSONObject params = JSONObject.parseObject(resString);
                 payContext.put("parameters", params);
                 if(!verifyPayParams(payContext)) {
