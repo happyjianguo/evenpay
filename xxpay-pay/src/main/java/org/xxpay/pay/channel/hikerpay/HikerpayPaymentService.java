@@ -49,8 +49,10 @@ public class HikerpayPaymentService extends BasePayment {
         // 总金额,单位分
         parmObj.put("price", String.valueOf(payOrder.getAmount()));
         // 货币
-        parmObj.put("currency", "CNY");
-        // 通知地址
+        parmObj.put("currency", "USD");
+        // 通知地址 http://gf.dev.honch123.com:8000/notify/%s/notify_res.htm
+        //payConfig.getNotifyUrl(getChannelName())
+        //String.format("http://gf.dev.honch123.com:8000/notify/%s/notify_res.htm",getChannelName())
         parmObj.put("notify_url", payConfig.getNotifyUrl(getChannelName()));
 
         switch (channelId) {

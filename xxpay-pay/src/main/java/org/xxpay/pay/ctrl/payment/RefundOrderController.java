@@ -191,7 +191,7 @@ public class RefundOrderController extends BaseController {
             return errorMessage;
         }
         Long mchIdL = Long.parseLong(mchId);
-        if(StringUtils.isBlank(payOrderId) && StringUtils.isBlank(mchOrderNo)) {
+        if(StringUtils.isBlank(payOrderId) || StringUtils.isBlank(mchOrderNo)) {
             errorMessage = "request params[payOrderId,mchOrderNo] error.";
             return errorMessage;
         }
@@ -212,6 +212,7 @@ public class RefundOrderController extends BaseController {
             errorMessage = "request params[channelUser] error.";
             return errorMessage;
         }
+
 
         // 签名信息
         if (StringUtils.isEmpty(sign)) {

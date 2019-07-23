@@ -44,7 +44,7 @@ public class HikerpayRefundService extends BaseRefund {
         // 商户退款单号
         String refundId = refundOrder.getRefundOrderId();
         // 退款金额
-        param.put("fee", 1);
+        param.put("fee", String.valueOf(refundOrder.getRefundAmount()));
         String reqUrl = hikertpayConfig.getReqUrl()
                 + "/gateway/partners/"
                 + PARTNER_CODE
@@ -69,7 +69,7 @@ public class HikerpayRefundService extends BaseRefund {
                 String result =  EntityUtils.toString(entity);
                 _log.info("Hikerpass退款请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
-                if ("SUCCESS".equals(res.getString("return_code"))) {
+                if ("FINISHED".equals(res.getString("return_code"))) {
                     retObj.put("obj", res);
                     retObj.put("status", "0");
                     retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
@@ -151,7 +151,7 @@ public class HikerpayRefundService extends BaseRefund {
                     */
                     String trade_state = res.getString("result_code");
                     retObj.put("obj", res);
-                    if("PAY_SUCCESS".equals(trade_state)){
+                    if("PARTIAL_REFUND".equals(trade_state) || "Full_REFUND".equals(trade_state)){
                         retObj.put("status", "0");
                     }else {
                         retObj.put("status", "1");
