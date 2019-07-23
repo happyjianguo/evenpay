@@ -55,10 +55,10 @@ public class HikerpayPaymentService extends BasePayment {
 
         switch (channelId) {
             case PayConstant.PAY_CHANNEL_HKPAY_WXPAY_NATIVE :
-                parmObj.put("channel","Alipay");
+                parmObj.put("channel","Wechat");
                 break;
             case PayConstant.PAY_CHANNEL_HKPAY_ALIPAY_NATIVE :
-                parmObj.put("channel","Wechat");
+                parmObj.put("channel","Alipay");
                 break;
             default:
                 retObj = buildRetObj(PayConstant.RETURN_VALUE_FAIL, "不支持的渠道[channelId="+channelId+"]");
