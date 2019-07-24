@@ -1,0 +1,126 @@
+version: '2.1'
+services:
+  zookeeper:
+    image: 'zookeeper:3.4.9'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    command: redis-server
+
+  activemq:
+    image: ivonet/activemq
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "61613:61613"
+    environment:
+      - ACTIVEMQ_MIN_MEMORY=512
+      - ACTIVEMQ_MAX_MEMORY=2048
+      - ACTIVEMQ_ENABLED_AUTH=false
+
+  service:
+    links:
+      - "zookeeper"
+    healthcheck:
+      test: "netstat -an|grep 8190 > /dev/null"
+      timeout: 3s
+      interval: 10s 
+      retries: 5
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:test
+    ports:
+      - "8190:8190"
+    restart: always
+
+  pay:
+    depends_on:
+      service:
+        condition: service_healthy
+    healthcheck:
+      test: "netstat -an|grep 3020 > /dev/null"
+      timeout: 3s
+      interval: 10s 
+      retries: 5
+    links:
+      - "zookeeper"
+      - "redis"
+      - "activemq"
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:test
+    ports:
+      - "3020:3020"
+    restart: always
+
+  mgr:
+    depends_on:
+      service:
+        condition: service_healthy
+    healthcheck:
+      test: "netstat -an|grep 8193 > /dev/null"
+      timeout: 3s
+      retries: 5
+      interval: 10s 
+    links:
+      - "zookeeper"
+      - "mch"
+      - "agent"
+      - "pay"
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-manage:test
+    ports:
+      - "8193:8193"
+    restart: always
+
+  agent:
+    depends_on:
+      service:
+        condition: service_healthy
+    healthcheck:
+      test: "netstat -an|grep 8192 > /dev/null"
+      retries: 5
+      timeout: 3s
+      interval: 10s 
+    links:
+      - "zookeeper"
+      - "mch"
+      - "pay"
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-agent:test
+    ports:
+      - "8192:8192"
+    restart: always
+
+
+  mch:
+    depends_on:
+      service:
+        condition: service_healthy
+    healthcheck:
+      test: "netstat -an|grep 8191 > /dev/null"
+      retries: 5
+      timeout: 3s
+      interval: 10s 
+    links:
+      - "zookeeper"
+      - "pay"
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-merchant:test
+    ports:
+      - "8191:8191"
+    restart: always
+
+  task:
+    depends_on:
+      service:
+        condition: service_healthy
+    healthcheck:
+      test: "netstat -an|grep 8194> /dev/null"
+      retries: 5
+      timeout: 3s
+      interval: 10s 
+    links:
+      - "zookeeper"
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:test
+    ports:
+      - "8194:8194"
+    restart: always

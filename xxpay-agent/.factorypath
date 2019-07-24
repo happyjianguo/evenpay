@@ -54,8 +54,8 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/code/gson/gson/2.8.1/gson-2.8.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/zxing/core/3.1.0/core-3.1.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/zxing/javase/3.1.0/javase-3.1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\src\evencc\evenpay\xxpay-agent\src\main\webapp\WEB-INF\lib\aliyun-java-sdk-core-3.3.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\src\evencc\evenpay\xxpay-agent\src\main\webapp\WEB-INF\lib\aliyun-java-sdk-dysmsapi-1.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\src\evenpay\xxpay-agent\src\main\webapp\WEB-INF\lib\aliyun-java-sdk-core-3.3.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\src\evenpay\xxpay-agent\src\main\webapp\WEB-INF\lib\aliyun-java-sdk-dysmsapi-1.0.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/poi/poi/3.14/poi-3.14.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/poi/poi-ooxml/3.14/poi-ooxml-3.14.jar" enabled="true" runInBatchMode="false"/>

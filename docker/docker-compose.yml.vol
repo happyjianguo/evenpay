@@ -1,0 +1,11 @@
+version: '2.1'
+services:
+  zookeeper:
+    volumes:
+      - "/opt/zookeeper/data:/data"
+  redis:
+    volumes:
+      - "/opt/redis/data:/data"
+  activemq:
+    volumes:
+      - "/opt/activemq/data:/data/activemq"

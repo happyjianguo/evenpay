@@ -1,0 +1,11 @@
+version: '2.1'
+services:
+  mysql:
+    image: registry.cn-hongkong.aliyuncs.com/evencc/evenpay-mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: evenpay123
+      MYSQL_DATABASE: xxpaydb
+      MYSQL_USER: evenpay
+      MYSQL_PASSWORD: evenpay123
+    volumes:
+      - "/opt/mysql:/var/lib/mysql"

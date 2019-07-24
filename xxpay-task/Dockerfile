@@ -3,7 +3,7 @@ FROM openjdk:8-alpine
 RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main/" > /etc/apk/repositories
 RUN apk update \
         && apk upgrade \
-        && apk add --no-cache bash \
+        && apk add --no-cache bash curl \
         bash-doc \
         bash-completion \
         && rm -rf /var/cache/apk/* \
