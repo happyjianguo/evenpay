@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.xxpay.core.common.constant.PayConstant;
+import org.xxpay.core.common.util.JsonUtil;
 import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.entity.RefundOrder;
 import org.xxpay.pay.channel.BaseRefund;
@@ -52,7 +53,7 @@ public class HikerpayRefundService extends BaseRefund {
                 + orderId
                 + "/refunds/"
                 + refundId + "?"
-                + HikerUtil.queryParams(PARTNER_CODE,CREDENTIAL_CODE);
+                + HikerUtil.queryParams(System.currentTimeMillis(),PARTNER_CODE,CREDENTIAL_CODE);
         CloseableHttpResponse response;
         CloseableHttpClient client = null;
         try {
@@ -64,14 +65,19 @@ public class HikerpayRefundService extends BaseRefund {
             httpPut.setHeader("Content-Type", "application/json");
             client = HttpClients.createDefault();
             response = client.execute(httpPut);
-            if(response != null && (response.getStatusLine().getStatusCode() -200 <100 )){
+            int statusCode = response.getStatusLine().getStatusCode();
+            if(response != null && (statusCode -200 <100 )){
                 HttpEntity entity = response.getEntity();
                 String result =  EntityUtils.toString(entity);
                 _log.info("Hikerpass退款请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
-                if ("FINISHED".equals(res.getString("return_code"))) {
+                String resultCode =  res.getString("result_code");
+                if (resultCode.equalsIgnoreCase("FINISHED")) {
                     retObj.put("obj", res);
                     retObj.put("status", "0");
+                    retObj.put("isSuccess", true);
+                    //商户订单号
+                    retObj.put("channelOrderNo", orderId);
                     retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
                 }else {
                     retObj.put("errDes", "退款操作失败!");
@@ -120,7 +126,7 @@ public class HikerpayRefundService extends BaseRefund {
                 + orderId
                 + "/refunds/"
                 + refundId + "?"
-                + HikerUtil.queryParams(PARTNER_CODE,CREDENTIAL_CODE);
+                + HikerUtil.queryParams(System.currentTimeMillis(),PARTNER_CODE,CREDENTIAL_CODE);
 
         CloseableHttpResponse response;
         CloseableHttpClient client = null;

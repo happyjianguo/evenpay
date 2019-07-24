@@ -62,6 +62,8 @@ public class PayConstant {
 
 	public final static String PAY_CHANNEL_HKPAY_WXPAY_NATIVE = CHANNEL_NAME_HKPAY + "_wxpay_native";			// 海科微信扫码
 	public final static String PAY_CHANNEL_HKPAY_ALIPAY_NATIVE = CHANNEL_NAME_HKPAY + "_alipay_native";		// 海科微支付宝扫码
+	public final static String PAY_CHANNEL_HKPAY_WX_MWEB = CHANNEL_NAME_HKPAY + "_wxpay_mweb";					//海科微信H5支付
+	public final static String PAY_CHANNEL_HKPAY_ALI_MWEB = CHANNEL_NAME_HKPAY + "_alipay_mweb";					//海科微信H5支付
 	
 	public final static byte PAY_STATUS_EXPIRED = -2; 	// 订单过期
 	public final static byte PAY_STATUS_FAILED = -1; 	// 支付失败

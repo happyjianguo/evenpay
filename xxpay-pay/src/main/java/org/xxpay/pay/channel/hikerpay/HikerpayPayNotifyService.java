@@ -2,12 +2,17 @@ package org.xxpay.pay.channel.hikerpay;
 
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.entity.PayOrder;
 import org.xxpay.pay.channel.BasePayNotify;
+import org.xxpay.pay.channel.hikerpay.util.HikerUtil;
+import org.xxpay.pay.channel.swiftpay.util.JsonUtil;
+import org.xxpay.pay.channel.swiftpay.util.SignUtils;
 import org.xxpay.pay.channel.swiftpay.util.XmlUtils;
 import org.xxpay.pay.util.Util;
 
@@ -115,8 +120,11 @@ public class HikerpayPayNotifyService extends BasePayNotify {
             return false;
         }
         HikerpayConfig hikertpayConfig = new HikerpayConfig(getPayParam(payOrder));
+        String CREDENTIAL_CODE = hikertpayConfig.getKey();
+        String PARTNER_CODE = hikertpayConfig.getMchId();
         // 验证签名
-        if (!checkParam(params, hikertpayConfig.getKey())) {
+
+        if (!checkParam(params,PARTNER_CODE,CREDENTIAL_CODE)) {
             errorMessage = "check sign failed.";
             _log.error("Swiftpay Notify parameter {}", errorMessage);
             payContext.put("retMsg", errorMessage);
@@ -135,8 +143,17 @@ public class HikerpayPayNotifyService extends BasePayNotify {
     }
 
     //验证签名
-    private boolean checkParam (JSONObject params,String key){
-
-        return true;
+    public static boolean checkParam(JSONObject params,String PARTNER_CODE,String CREDENTIAL_CODE) {
+        //long time = System.currentTimeMillis();
+        boolean result = false;
+        String validStr = PARTNER_CODE + "&" + params.getString("time") + "&" + params.getString("nonce_str") + "&" + CREDENTIAL_CODE;
+        String signV = DigestUtils.sha256Hex(validStr).toLowerCase();
+        String sign = params.getString("sign");
+        if(!StringUtils.isEmpty(sign) && sign.equalsIgnoreCase(signV)) {
+            result = true;
+        }
+        return result;
     }
+
+
 }
