@@ -53,14 +53,28 @@ public class HikerpayPaymentService extends BasePayment {
         // 通知地址 http://gf.dev.honch123.com:8000/notify/%s/notify_res.htm
         //payConfig.getNotifyUrl(getChannelName())
         //String.format("http://gf.dev.honch123.com:8000/notify/%s/notify_res.htm",getChannelName())
-        parmObj.put("notify_url", payConfig.getNotifyUrl(getChannelName()));
+        parmObj.put("notify_url", String.format(payConfig.getNotifyUrl(getChannelName()),getChannelName()));
 
+        String urltype = "/gateway";
         switch (channelId) {
             case PayConstant.PAY_CHANNEL_HKPAY_WXPAY_NATIVE :
                 parmObj.put("channel","Wechat");
                 break;
             case PayConstant.PAY_CHANNEL_HKPAY_ALIPAY_NATIVE :
                 parmObj.put("channel","Alipay");
+                break;
+            case PayConstant.PAY_CHANNEL_HKPAY_WX_MWEB :
+                parmObj.put("channel","Wechat");
+                urltype = "/h5_payment";
+                break;
+            case PayConstant.PAY_CHANNEL_HKPAY_ALI_MWEB :
+                parmObj.put("channel","Alipay");
+                urltype = "/h5_payment";
+                break;
+            case PayConstant.PAY_CHANNEL_HKPAY_ALI_JSAPI :
+                parmObj.put("channel","Wechat");
+                parmObj.put("operator","web");
+                urltype = "/wechat_jsapi_gateway";
                 break;
             default:
                 retObj = buildRetObj(PayConstant.RETURN_VALUE_FAIL, "不支持的渠道[channelId="+channelId+"]");
@@ -71,10 +85,10 @@ public class HikerpayPaymentService extends BasePayment {
         String PARTNER_CODE = hikertpayConfig.getMchId();
         String orderId = payOrder.getPayOrderId();
         String reqUrl = hikertpayConfig.getReqUrl()
-                + "/gateway/partners/"
+                + urltype + "/partners/"
                 + PARTNER_CODE + "/orders/"
                 + orderId + "?"
-                + HikerUtil.queryParams(PARTNER_CODE,CREDENTIAL_CODE);
+                + HikerUtil.queryParams(System.currentTimeMillis(),PARTNER_CODE,CREDENTIAL_CODE);
         CloseableHttpResponse response;
         CloseableHttpClient client = null;
         try {
@@ -96,8 +110,20 @@ public class HikerpayPaymentService extends BasePayment {
                     int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), null);
                     _log.info("[{}] Hikerpass 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
                     JSONObject payInfo = new JSONObject();
-                    payInfo.put("codeUrl", res.get("code_url")); // 二维码支付链接
-                    payInfo.put("payMethod", PayConstant.PAY_METHOD_CODE_IMG);
+                    if (channelId.equalsIgnoreCase(PayConstant.PAY_CHANNEL_HKPAY_WXPAY_NATIVE) ||
+                            channelId.equalsIgnoreCase(PayConstant.PAY_CHANNEL_HKPAY_ALIPAY_NATIVE)) {
+                        payInfo.put("codeUrl", res.get("code_url")); // 二维码支付链接
+                        payInfo.put("payMethod", PayConstant.PAY_METHOD_CODE_IMG);
+                    }else if(channelId.equalsIgnoreCase(PayConstant.PAY_CHANNEL_HKPAY_ALI_JSAPI) ){
+                        payInfo.put("payUrl", res.get("pay_url"));
+                        payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
+                    } else{
+                        //H5支付的情况下返回支付页
+                        payInfo.put("payUrl", res.get("pay_url")+ "?redirect=www.baidu.com&"
+                                + HikerUtil.queryParams(System.currentTimeMillis(),PARTNER_CODE,CREDENTIAL_CODE));
+                        payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
+                    }
+
                     retObj.put("payParams", payInfo);
                     retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
                     return retObj;
@@ -145,7 +171,7 @@ public class HikerpayPaymentService extends BasePayment {
                 + "/gateway/partners/"
                 + PARTNER_CODE + "/orders/"
                 + orderId + "?"
-                + HikerUtil.queryParams(PARTNER_CODE,CREDENTIAL_CODE);
+                + HikerUtil.queryParams(System.currentTimeMillis(),PARTNER_CODE,CREDENTIAL_CODE);
 
         CloseableHttpResponse response;
         CloseableHttpClient client = null;
