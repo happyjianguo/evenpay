@@ -119,7 +119,7 @@ public class HikerpayPaymentService extends BasePayment {
                         payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
                     } else{
                         //H5支付的情况下返回支付页
-                        payInfo.put("payUrl", res.get("pay_url")+ "?redirect=www.baidu.com&"
+                        payInfo.put("payUrl", res.get("pay_url")+ "?redirect="+payOrder.getReturnUrl()+"&"
                                 + HikerUtil.queryParams(System.currentTimeMillis(),PARTNER_CODE,CREDENTIAL_CODE));
                         payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
                     }
