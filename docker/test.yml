@@ -28,7 +28,7 @@ services:
       - "zookeeper"
     healthcheck:
       test: "netstat -an|grep 8190 > /dev/null"
-      timeout: 3s
+      timeout: 10s
       interval: 10s 
       retries: 5
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:test
@@ -113,11 +113,6 @@ services:
     depends_on:
       service:
         condition: service_healthy
-    healthcheck:
-      test: "netstat -an|grep 8194> /dev/null"
-      retries: 5
-      timeout: 3s
-      interval: 10s 
     links:
       - "zookeeper"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:test
