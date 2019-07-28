@@ -1,0 +1,19 @@
+version: '2.1'
+services:
+  service:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:test
+
+  mch:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-merchant:test
+
+  agent:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-agent:test
+
+  pay:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:test
+
+  task:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:test
+
+  mgr:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-manage:test

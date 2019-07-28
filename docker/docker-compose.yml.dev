@@ -1,79 +1,19 @@
 version: '2.1'
 services:
-  zookeeper:
-    image: 'zookeeper:3.4.9'
-    ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-  redis:
-    image: redis
-    ports:
-      - 6379:6379
-    command: redis-server
-
-  activemq:
-    image: ivonet/activemq
-    ports:
-      - "8161:8161"
-      - "61616:61616"
-      - "61613:61613"
-    environment:
-      - ACTIVEMQ_MIN_MEMORY=512
-      - ACTIVEMQ_MAX_MEMORY=2048
-      - ACTIVEMQ_ENABLED_AUTH=false
-
   service:
-    links:
-      - "zookeeper"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:dev
-    ports:
-      - "8190:8190"
-    restart: always
+
   mch:
-    links:
-      - "zookeeper"
-      - "pay"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-merchant:dev
-    ports:
-      - "8191:8191"
-    restart: always
 
   agent:
-    links:
-      - "zookeeper"
-      - "mch"
-      - "pay"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-agent:dev
-    ports:
-      - "8192:8192"
-    restart: always
 
   pay:
-    depends_on:
-      - "zookeeper"
-      - "activemq"
-      - "redis"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:dev
-    ports:
-      - "3020:3020"
-    restart: always
 
   task:
-    links:
-      - "zookeeper"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:dev
-    ports:
-      - "8194:8194"
-    restart: always
 
   mgr:
-    links:
-      - "zookeeper"
-      - "mch"
-      - "agent"
-      - "pay"
     image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-manage:dev
-    ports:
-      - "8193:8193"
-    restart: always

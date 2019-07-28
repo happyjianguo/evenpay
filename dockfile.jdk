@@ -1,0 +1,16 @@
+FROM primetoninc/jdk:1.8
+
+RUN yum install -y maven
+RUN mkdir -p /opt/xxpay
+RUN mkdir -p /home/xxpay/service
+
+ADD . /opt/xxpay
+RUN cd /opt/xxpay/; mvn -pl xxpay-service -am clean install -Ptest
+RUN cp /opt/xxpay/xxpay-service/target/xxpay-service*tar.gz /home/xxpay/service/
+WORKDIR /home/xxpay/service
+RUN tar xzf xxpay*tar.gz
+COPY entry.sh /home/xxpay/service/
+
+WORKDIR /home/xxpay/service
+CMD ["sh", "entry.sh"]
+EXPOSE 8190
