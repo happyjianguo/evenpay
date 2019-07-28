@@ -23,7 +23,7 @@ import java.util.Map;
  * @description: ${CHANNEL_NAME}支付回调
  */
 @Service
-public class ${CLASS_NAME}NotifyService extends BasePayNotify {
+public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
 
     private static final MyLog _log = MyLog.getLog(${CLASS_NAME}NotifyService.class);
 
