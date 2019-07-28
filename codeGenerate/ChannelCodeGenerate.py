@@ -4,7 +4,7 @@ import os,sys,re,traceback
 from datetime import datetime
 from string import Template
 import json
-def generateAndroidJavaCode(package_name, class_name, file_name,template):
+def generateChannelJavaCode(package_name, class_name, file_name,template):
     channelName = class_name.upper()
     path = "./" + class_name
     filePath = r'%s/%s' % (path,file_name)
@@ -49,4 +49,4 @@ for channel in configurationJson["channelList"]:
     for template in configurationJson["templates"]:
         filename = template.replace("Base",channel).replace(".tpl","")
         print ("filename %s" % filename)
-        generateAndroidJavaCode(packgename,channel,filename,template)
+        generateChannelJavaCode(packgename,channel,filename,template)
