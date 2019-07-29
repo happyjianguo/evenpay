@@ -1,4 +1,4 @@
-package ${PACKAGE_NAME};
+package org.xxpay.pay.channel.itopay;
 
 
 import com.alibaba.fastjson.JSONObject;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
+import org.xxpay.core.common.util.PayDigestUtil;
 import org.xxpay.core.entity.PayOrder;
 import org.xxpay.pay.channel.BasePayNotify;
 import org.xxpay.pay.channel.swiftpay.util.XmlUtils;
@@ -15,27 +16,28 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 
 /**
  * @author: gf
- * @date: ${DATA}
- * @description: ${CHANNEL_NAME}支付回调
+ * @date: 2019-07-29 17:42:31
+ * @description: ITOPAY支付回调
  */
 @Service
-public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
+public class ItopayPayNotifyService extends BasePayNotify {
 
-    private static final MyLog _log = MyLog.getLog(${CLASS_NAME}NotifyService.class);
+    private static final MyLog _log = MyLog.getLog(ItopayNotifyService.class);
 
     @Override
     public String getChannelName() {
-        return PayConstant.CHANNEL_NAME_${CHANNEL_NAME};
+        return PayConstant.CHANNEL_NAME_ITOPAY;
     }
 
     @Override
     public JSONObject doNotify(Object notifyData) {
-        String logPrefix = "【处理${CHANNEL_NAME}支付回调】";
-        _log.info("====== 开始处理${CHANNEL_NAME}支付回调通知 ======");
+        String logPrefix = "【处理ITOPAY支付回调】";
+        _log.info("====== 开始处理ITOPAY支付回调通知 ======");
         HttpServletRequest req = (HttpServletRequest) notifyData;
         JSONObject retObj = buildRetObj();
         Map<String, Object> payContext = new HashMap();
@@ -43,11 +45,10 @@ public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
         String respString = PayConstant.RETURN_SWIFTPAY_VALUE_FAIL;
         try {
             req.setCharacterEncoding("utf-8");
-            String resString = XmlUtils.parseRequst(req);
-            _log.info("[{}]回调通知参数,data={}", getChannelName(), resString);
-
-            if (!StringUtils.isEmpty(respString)) {
-                JSONObject params = JSONObject.parseObject(resString);
+            SortedMap temp = XmlUtils.getParameterMap(req);
+            _log.info("[{}]回调通知参数,data={}", getChannelName(), temp);
+            if (!StringUtils.isEmpty(temp.get("siteid"))) {
+                JSONObject params = new JSONObject(temp);
                 payContext.put("parameters", params);
                 if(!verifyPayParams(payContext)) {
                     retObj.put(PayConstant.RESPONSE_RESULT, PayConstant.RETURN_SWIFTPAY_VALUE_FAIL);
@@ -69,19 +70,19 @@ public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
                     payOrder.setStatus(PayConstant.PAY_STATUS_SUCCESS);
                 }
                 baseNotify4MchPay.doNotify(payOrder, true);
-                _log.info("====== 完成处理${CHANNEL_NAME}支付回调通知 ======");
+                _log.info("====== 完成处理ITOPAY支付回调通知 ======");
                 respString = PayConstant.RETURN_SWIFTPAY_VALUE_SUCCESS;
             }
 
         }catch (Exception e) {
-            _log.error(e, logPrefix + "${CHANNEL_NAME}支付退款处理异常");
+            _log.error(e, logPrefix + "ITOPAY支付退款处理异常");
         }
         retObj.put(PayConstant.RESPONSE_RESULT, respString);
         return retObj;
     }
 
     /**
-     * 验证${CHANNEL_NAME}支付通知参数
+     * 验证ITOPAY支付通知参数
      * @return
      */
     public boolean verifyPayParams(Map<String, Object> payContext) {
@@ -89,11 +90,11 @@ public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
         //校验结果是否成功
 
         // 商户订单号 根据对接文档修改参数名
-        String out_trade_no = params.getString("partner_order_id");
+        String out_trade_no = params.getString("site_orderid");
         // 支付金额
-        String total_fee = params.getString("total_fee");
+        String total_fee = params.getString("paymoney");
         if (StringUtils.isEmpty(total_fee)) {
-            _log.error("${CHANNEL_NAME} Notify parameter total_amount is empty. total_fee={}", total_fee);
+            _log.error("ITOPAY Notify parameter total_amount is empty. total_fee={}", total_fee);
             payContext.put("retMsg", "total_amount is empty");
             return false;
         }
@@ -103,15 +104,15 @@ public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
         String payOrderId = out_trade_no;
         PayOrder payOrder = rpcCommonService.rpcPayOrderService.findByPayOrderId(payOrderId);
         if (payOrder == null) {
-            _log.error("${CHANNEL_NAME} Can't found payOrder form db. payOrderId={}, ", payOrderId);
+            _log.error("ITOPAY Can't found payOrder form db. payOrderId={}, ", payOrderId);
             payContext.put("retMsg", "Can't found payOrder");
             return false;
         }
-        ${CLASS_NAME}Config payConfig = new ${CLASS_NAME}Config(getPayParam(payOrder));
+        ItopayConfig payConfig = new ItopayConfig(getPayParam(payOrder));
         // 验证签名
         if (!checkParam(params, payConfig.getKey())) {
             errorMessage = "check sign failed.";
-            _log.error("${CHANNEL_NAME} Notify parameter {}", errorMessage);
+            _log.error("ITOPAY Notify parameter {}", errorMessage);
             payContext.put("retMsg", errorMessage);
             return false;
         }
@@ -119,7 +120,7 @@ public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
         long outPayAmt = new BigDecimal(total_fee).longValue();
         long dbPayAmt = payOrder.getAmount().longValue();
         if (dbPayAmt != outPayAmt) {
-            _log.error("db ${CHANNEL_NAME} payOrder record payPrice not equals total_amount. total_amount={},payOrderId={}", total_fee, payOrderId);
+            _log.error("db ITOPAY payOrder record payPrice not equals total_amount. total_amount={},payOrderId={}", total_fee, payOrderId);
             payContext.put("retMsg", "");
             return false;
         }

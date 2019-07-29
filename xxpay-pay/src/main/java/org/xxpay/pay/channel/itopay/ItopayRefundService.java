@@ -1,4 +1,4 @@
-package ${PACKAGE_NAME};
+package org.xxpay.pay.channel.itopay;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
@@ -20,21 +20,21 @@ import java.io.IOException;
 
 /**
  * @author: gf
- * @date: ${DATA}
- * @description: ${CHANNEL_NAME}退款
+ * @date: 2019-07-29 17:42:31
+ * @description: ITOPAY退款
  */
 @Service
-public class ${CLASS_NAME}RefundService extends BaseRefund {
+public class ItopayRefundService extends BaseRefund {
 
-    private static final MyLog _log = MyLog.getLog(${CLASS_NAME}RefundService.class);
+    private static final MyLog _log = MyLog.getLog(ItopayRefundService.class);
 
     @Override
     public String getChannelName() {
-        return PayConstant.CHANNEL_NAME_${CHANNEL_NAME};
+        return PayConstant.CHANNEL_NAME_ITOPAY;
     }
 
     public JSONObject refund(RefundOrder refundOrder) {
-        ${CLASS_NAME}Config payChannelConfig = new ${CLASS_NAME}Config(getRefundParam(refundOrder));
+        ItopayConfig payConfig = new ItopayConfig(getRefundParam(refundOrder));
         JSONObject retObj = new JSONObject();
         JSONObject param = new JSONObject();
         
@@ -50,7 +50,7 @@ public class ${CLASS_NAME}RefundService extends BaseRefund {
     @Override
     public JSONObject query(RefundOrder refundOrder) {
         //String channelId = payOrder.getChannelId();
-        ${CLASS_NAME}Config payChannelConfig = new ${CLASS_NAME}Config(getRefundParam(refundOrder));
+        ItopayConfig payConfig = new ItopayConfig(getRefundParam(refundOrder));
         JSONObject retObj = new JSONObject();
         
         return retObj;

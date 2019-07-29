@@ -41,6 +41,7 @@ public class PayConstant {
 	public final static String CHANNEL_NAME_HCPAY = "hcpay"; 				// 渠道名称:汇潮支付
 	public final static String CHANNEL_NAME_YYKPAY = "yykpay"; 				// 渠道名称:易游酷支付
 	public final static String CHANNEL_NAME_HKPAY = "hikerpay"; 		    // 渠道名称:海科支付
+	public final static String CHANNEL_NAME_ITOPAY = "itopay";
 
 
 	public final static String PAY_CHANNEL_SWIFTPAY_WXPAY_NATIVE = CHANNEL_NAME_SWIFTPAY + "_wxpay_native";			// 威富通微信扫码
@@ -63,7 +64,10 @@ public class PayConstant {
 	public final static String PAY_CHANNEL_HKPAY_WX_MWEB = CHANNEL_NAME_HKPAY + "_wxpay_mweb";					//海科微信H5支付
 	public final static String PAY_CHANNEL_HKPAY_ALI_MWEB = CHANNEL_NAME_HKPAY + "_alipay_mweb";					//海科支付宝H5支付
 	public final static String PAY_CHANNEL_HKPAY_ALI_JSAPI = CHANNEL_NAME_HKPAY + "_alipay_jsapi";					//海科微信H5支付
-	
+
+	public final static String PAY_CHANNEL_ITOPAY_WX_MWEB = CHANNEL_NAME_ITOPAY + "_wxpay_mweb"; //itopay 微信H5支付
+	public final static String PAY_CHANNEL_ITOPAY_ALI_MWEB = CHANNEL_NAME_ITOPAY + "_alipay_mweb";//itopay 支付宝H5支付
+
 	public final static byte PAY_STATUS_EXPIRED = -2; 	// 订单过期
 	public final static byte PAY_STATUS_FAILED = -1; 	// 支付失败
 	public final static byte PAY_STATUS_INIT = 0; 		// 初始态

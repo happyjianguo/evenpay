@@ -41,7 +41,7 @@ public class ${CLASS_NAME}PaymentService extends BasePayment {
     @Override
     public JSONObject pay(PayOrder payOrder) {
         String channelId = payOrder.getChannelId();
-        ${CLASS_NAME}Config payConfig = new ${CLASS_NAME}Config(getPayParam(payOrder));
+        ${CLASS_NAME}Config payChannelConfig = new ${CLASS_NAME}Config(getPayParam(payOrder));
         JSONObject retObj = new JSONObject();
         JSONObject parmObj = new JSONObject();
 
@@ -56,7 +56,7 @@ public class ${CLASS_NAME}PaymentService extends BasePayment {
     @Override
     public JSONObject query(PayOrder payOrder) {
         //String channelId = payOrder.getChannelId();
-        ${CLASS_NAME}Config payConfig = new ${CLASS_NAME}Config(getPayParam(payOrder));
+        ${CLASS_NAME}Config payChannelConfig = new ${CLASS_NAME}Config(getPayParam(payOrder));
         JSONObject retObj = new JSONObject();
         String orderId = payOrder.getPayOrderId();
         

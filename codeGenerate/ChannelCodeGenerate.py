@@ -31,8 +31,7 @@ configuration = """
 {
   "packgename":"org.xxpay.pay.channel",
   "channelList":[
-    "Hiker",
-    "Synopay"
+    "Itopay"
   ],
   "templates":[
       "BaseConfig.java.tpl",
