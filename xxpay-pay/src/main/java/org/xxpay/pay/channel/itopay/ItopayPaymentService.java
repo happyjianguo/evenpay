@@ -2,12 +2,15 @@ package org.xxpay.pay.channel.itopay;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.xxpay.core.common.constant.PayConstant;
@@ -16,6 +19,8 @@ import org.xxpay.core.common.util.PayDigestUtil;
 import org.xxpay.core.entity.PayOrder;
 import org.xxpay.pay.channel.BasePayment;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 
 /**
@@ -45,7 +50,7 @@ public class ItopayPaymentService extends BasePayment {
         JSONObject retObj = new JSONObject();
         String orderId = payOrder.getPayOrderId();
 
-        JSONObject post = new JSONObject();
+        Map<String, Object> post=new HashMap<String, Object>();
         post.put("site_orderid",orderId);//商户订单号
         post.put("paymoney", String.valueOf(payOrder.getAmount()));// 总金额,单位分
         post.put("siteid", payChannelConfig.getMchId());//商户号
@@ -79,21 +84,39 @@ public class ItopayPaymentService extends BasePayment {
         post.put("sha1key",PayDigestUtil.digest(temp));
 
         String reqUrl = payChannelConfig.getReqUrl()+"/payp/interface/pay/payinit.php";
-        HttpPost httpPot = new HttpPost(reqUrl);
+        HttpPost httpPost = new HttpPost(reqUrl);
         _log.info("Itopay支付请求地址:{}", reqUrl);
         _log.info("Itopay支付请求数据:{}", post.toString());
-        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
-        httpPot.setEntity(entityParams);
+
+        //设置参数
+        List<NameValuePair> list = new ArrayList<NameValuePair>();
+        Iterator iterator = post.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String,String> elem = (Map.Entry<String, String>) iterator.next();
+            list.add(new BasicNameValuePair(elem.getKey(),String.valueOf(elem.getValue())));
+        }
+        if(list.size() > 0){
+            UrlEncodedFormEntity entity = null;
+            try {
+                entity = new UrlEncodedFormEntity(list,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            httpPost.setEntity(entity);
+        }
+
+//        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
+//        httpPot.setEntity(entityParams);
 
         //调用HTT请求函数
-        JSONObject resObj = sendHttp(httpPot);
+        JSONObject resObj = sendHttp(httpPost);
         if(resObj != null){
             /* 请求成功后对返回结果进行处理 */
             String channelOrderNo = resObj.getJSONObject("data").getString("trade_orderid");//渠道订单号
             int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), channelOrderNo,resObj.toJSONString());
             _log.info("[{}] Itopay 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
             JSONObject payInfo = new JSONObject();
-            payInfo.put("payUrl", resObj.getJSONObject("data").getShortValue("payinfo"));
+            payInfo.put("payUrl", resObj.getJSONObject("data").getString("payinfo"));
             payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
             retObj.put("payParams", payInfo);
             retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
@@ -119,7 +142,7 @@ public class ItopayPaymentService extends BasePayment {
         JSONObject retObj = new JSONObject();
         String orderId = payOrder.getPayOrderId();
 
-        //发送参数组合
+        //发送参数拼装
         JSONObject post = new JSONObject();
         post.put("site_orderid",orderId);//商户订单号
         post.put("paymoney", String.valueOf(payOrder.getAmount()));// 总金额,单位分
@@ -133,13 +156,30 @@ public class ItopayPaymentService extends BasePayment {
         post.put("sha1key",PayDigestUtil.digest(temp));
         //定义HTTP请求方式 POST、GET、PUT
         String reqUrl = payChannelConfig.getReqUrl()+"/payp/interface/pay/selorder.php";
-        HttpPost httpPot = new HttpPost(reqUrl);
+        HttpPost httpPost = new HttpPost(reqUrl);
         _log.info("Itopay订单查询请求地址:{}", reqUrl);
         _log.info("Itopay订单查询请求数据:{}", post.toString());
-        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
-        httpPot.setEntity(entityParams);
+
+        List<NameValuePair> list = new ArrayList<NameValuePair>();
+        Iterator iterator = post.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String,String> elem = (Map.Entry<String, String>) iterator.next();
+            list.add(new BasicNameValuePair(elem.getKey(),String.valueOf(elem.getValue())));
+        }
+        if(list.size() > 0){
+            UrlEncodedFormEntity entity = null;
+            try {
+                entity = new UrlEncodedFormEntity(list,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            httpPost.setEntity(entity);
+        }
+
+//        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
+//        httpPost.setEntity(entityParams);
         //调用HTT请求函数
-        JSONObject resObj = sendHttp(httpPot);
+        JSONObject resObj = sendHttp(httpPost);
         if(resObj != null){
             /* 请求成功后对返回结果进行处理 */
             String trade_state = resObj.getJSONObject("data").getString("status");
@@ -158,8 +198,14 @@ public class ItopayPaymentService extends BasePayment {
         return retObj;
     }
 
-    //处理返回结果集如果失败则返回null
-    private JSONObject procRes(CloseableHttpResponse response) throws IOException {
+
+    /**
+     * 处理返回结果
+     * @param response
+     * @return
+     */
+    @Override
+    protected JSONObject procRes(CloseableHttpResponse response) throws IOException {
         JSONObject res = null;
         if(response != null && (response.getStatusLine().getStatusCode() -200 <100 )){
             HttpEntity entity = response.getEntity();
@@ -169,33 +215,11 @@ public class ItopayPaymentService extends BasePayment {
             res =  JSONObject.parseObject(temp);
             if ("200".equals(res.getString("code"))) {
                 return res;
+            }else {
+                res = null;
             }
         }
         return res;
-    }
-
-
-    //发送请求
-    private JSONObject sendHttp(HttpUriRequest request) {
-        JSONObject resObj = null;
-        CloseableHttpResponse response;
-        CloseableHttpClient client = null;
-        try {
-            client = HttpClients.createDefault();
-            response = client.execute(request);
-            resObj = procRes(response);
-        }catch (Exception e){
-            return resObj;
-        }finally {
-            if(client != null){
-                try {
-                    client.close();
-                } catch (IOException e) {
-                    _log.error(e, "");
-                }
-            }
-        }
-        return resObj;
     }
 
 }
