@@ -34,10 +34,7 @@ public class ItopayRefundService extends BaseRefund {
     }
 
     public JSONObject refund(RefundOrder refundOrder) {
-        ItopayConfig payConfig = new ItopayConfig(getRefundParam(refundOrder));
-        JSONObject retObj = new JSONObject();
-        JSONObject param = new JSONObject();
-        
+        JSONObject retObj = buildRetObj(PayConstant.RETURN_VALUE_FAIL, "不支持退款的渠道[channelId=" + refundOrder.getChannelId() + "]");
         return retObj;
     }
 
@@ -49,10 +46,7 @@ public class ItopayRefundService extends BaseRefund {
      */
     @Override
     public JSONObject query(RefundOrder refundOrder) {
-        //String channelId = payOrder.getChannelId();
-        ItopayConfig payConfig = new ItopayConfig(getRefundParam(refundOrder));
-        JSONObject retObj = new JSONObject();
-        
+        JSONObject retObj = buildRetObj(PayConstant.RETURN_VALUE_FAIL, "不支持退款的渠道[channelId=" + refundOrder.getChannelId() + "]");
         return retObj;
     }
 }

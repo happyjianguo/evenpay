@@ -3,9 +3,8 @@ package org.xxpay.pay.channel.itopay;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -16,7 +15,6 @@ import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.common.util.PayDigestUtil;
 import org.xxpay.core.entity.PayOrder;
 import org.xxpay.pay.channel.BasePayment;
-import org.xxpay.pay.channel.hikerpay.util.HikerUtil;
 import java.io.IOException;
 
 
@@ -45,10 +43,11 @@ public class ItopayPaymentService extends BasePayment {
         String channelId = payOrder.getChannelId();
         ItopayConfig payChannelConfig = new ItopayConfig(getPayParam(payOrder));
         JSONObject retObj = new JSONObject();
-        JSONObject post = new JSONObject();
         String orderId = payOrder.getPayOrderId();
-        // 总金额,单位分
-        post.put("paymoney", String.valueOf(payOrder.getAmount()));
+
+        JSONObject post = new JSONObject();
+        post.put("site_orderid",orderId);//商户订单号
+        post.put("paymoney", String.valueOf(payOrder.getAmount()));// 总金额,单位分
         post.put("siteid", payChannelConfig.getMchId());//商户号
         post.put("goodsname",payOrder.getBody());
         post.put("client_ip",payOrder.getClientIp());
@@ -79,55 +78,29 @@ public class ItopayPaymentService extends BasePayment {
                 "|" + payChannelConfig.getKey();
         post.put("sha1key",PayDigestUtil.digest(temp));
 
-        String reqUrl = payChannelConfig.getReqUrl();
-        CloseableHttpResponse response;
-        CloseableHttpClient client = null;
-        try{
-            String req = parmObj.toJSONString();
-            HttpPost httpPot = new HttpPost(reqUrl);
-            _log.info("Itopay请求地址:{}", reqUrl);
-            _log.info("Itopay请求数据:{}", req);
-            StringEntity entityParams = new StringEntity(req, "utf-8");
-            httpPot.setEntity(entityParams);
-            client = HttpClients.createDefault();
-            response = client.execute(httpPot);
-            if(response != null && (response.getStatusLine().getStatusCode() -200 <100 )){
-                HttpEntity entity = response.getEntity();
-                String result =  EntityUtils.toString(entity);
-                _log.info("Itopay请求结果:{}", result);
-                JSONObject res =  JSONObject.parseObject(result);
-                if ("200".equals(res.getString("code"))) {
-                    int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), null);
-                    _log.info("[{}] Itopay 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
-                    JSONObject payInfo = new JSONObject();
-                    payInfo.put("payUrl", res.getJSONObject("data").getShortValue("payinfo"));
-                    payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
-                    retObj.put("payParams", payInfo);
-                    retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
-                    return retObj;
-                }else {
-                    retObj.put("errDes", "支付操作失败!");
-                    retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
-                    return retObj;
-                }
-            }else{
-                _log.info("Itopay请求状态码response.getStatusLine().getStatusCode():{}", response.getStatusLine().getStatusCode());
-                retObj.put("errDes", "支付操作失败!");
-                retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
-            }
+        String reqUrl = payChannelConfig.getReqUrl()+"/payp/interface/pay/payinit.php";
+        HttpPost httpPot = new HttpPost(reqUrl);
+        _log.info("Itopay支付请求地址:{}", reqUrl);
+        _log.info("Itopay支付请求数据:{}", post.toString());
+        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
+        httpPot.setEntity(entityParams);
 
-        }catch (Exception e){
+        //调用HTT请求函数
+        JSONObject resObj = sendHttp(httpPot);
+        if(resObj != null){
+            /* 请求成功后对返回结果进行处理 */
+            String channelOrderNo = resObj.getJSONObject("data").getString("trade_orderid");//渠道订单号
+            int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), channelOrderNo,resObj.toJSONString());
+            _log.info("[{}] Itopay 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
+            JSONObject payInfo = new JSONObject();
+            payInfo.put("payUrl", resObj.getJSONObject("data").getShortValue("payinfo"));
+            payInfo.put("payMethod", PayConstant.PAY_METHOD_FORM_JUMP);
+            retObj.put("payParams", payInfo);
+            retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
+            return retObj;
+        }else {
             retObj.put("errDes", "支付操作失败!");
             retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
-            return retObj;
-        }finally {
-            if(client != null){
-                try {
-                    client.close();
-                } catch (IOException e) {
-                    _log.error(e, "");
-                }
-            }
         }
 
         return retObj;
@@ -142,10 +115,87 @@ public class ItopayPaymentService extends BasePayment {
     public JSONObject query(PayOrder payOrder) {
         String channelId = payOrder.getChannelId();
         ItopayConfig payChannelConfig = new ItopayConfig(getPayParam(payOrder));
+        //返回值
         JSONObject retObj = new JSONObject();
-        retObj = buildRetObj(PayConstant.RETURN_VALUE_FAIL, "不支持的渠道[channelId=" + channelId + "]");
+        String orderId = payOrder.getPayOrderId();
+
+        //发送参数组合
+        JSONObject post = new JSONObject();
+        post.put("site_orderid",orderId);//商户订单号
+        post.put("paymoney", String.valueOf(payOrder.getAmount()));// 总金额,单位分
+        post.put("siteid", payChannelConfig.getMchId());//商户号
+        post.put("nowinttime", System.currentTimeMillis()/1000);//时间戳
+        String temp = post.get("siteid") +
+                "|" + "" +
+                "|" + post.get("site_orderid") +
+                "|" + post.get("nowinttime") +
+                "|" + payChannelConfig.getKey();
+        post.put("sha1key",PayDigestUtil.digest(temp));
+        //定义HTTP请求方式 POST、GET、PUT
+        String reqUrl = payChannelConfig.getReqUrl()+"/payp/interface/pay/selorder.php";
+        HttpPost httpPot = new HttpPost(reqUrl);
+        _log.info("Itopay订单查询请求地址:{}", reqUrl);
+        _log.info("Itopay订单查询请求数据:{}", post.toString());
+        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
+        httpPot.setEntity(entityParams);
+        //调用HTT请求函数
+        JSONObject resObj = sendHttp(httpPot);
+        if(resObj != null){
+            /* 请求成功后对返回结果进行处理 */
+            String trade_state = resObj.getJSONObject("data").getString("status");
+            retObj.put("obj", resObj);
+            if("SUCCESS".equals(trade_state)){
+                retObj.put("status", "0");
+            }else {
+                retObj.put("status", "1");
+            }
+            retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
+        }else{
+            retObj.put("errDes", "查询操作失败!");
+            retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
+        }
+
         return retObj;
     }
 
+    //处理返回结果集如果失败则返回null
+    private JSONObject procRes(CloseableHttpResponse response) throws IOException {
+        JSONObject res = null;
+        if(response != null && (response.getStatusLine().getStatusCode() -200 <100 )){
+            HttpEntity entity = response.getEntity();
+            String temp =  EntityUtils.toString(entity);
+            _log.info("Itopay请求结果:{}", temp);
+            temp = temp.replace("[","{").replace("]","}");
+            res =  JSONObject.parseObject(temp);
+            if ("200".equals(res.getString("code"))) {
+                return res;
+            }
+        }
+        return res;
+    }
+
+
+    //发送请求
+    private JSONObject sendHttp(HttpUriRequest request) {
+        JSONObject resObj = null;
+        CloseableHttpResponse response;
+        CloseableHttpClient client = null;
+        try {
+            client = HttpClients.createDefault();
+            response = client.execute(request);
+            resObj = procRes(response);
+        }catch (Exception e){
+            return resObj;
+        }finally {
+            if(client != null){
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    _log.error(e, "");
+                }
+            }
+        }
+        return resObj;
+    }
 
 }

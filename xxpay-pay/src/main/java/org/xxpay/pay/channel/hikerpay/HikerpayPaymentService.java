@@ -107,7 +107,8 @@ public class HikerpayPaymentService extends BasePayment {
                 _log.info("Hikerpass请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
                 if ("SUCCESS".equals(res.getString("return_code"))) {
-                    int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), null);
+                    String channelOrderNo = res.getString("order_id");//对方商户号
+                    int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), channelOrderNo,res.toJSONString());
                     _log.info("[{}] Hikerpass 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
                     JSONObject payInfo = new JSONObject();
                     if (channelId.equalsIgnoreCase(PayConstant.PAY_CHANNEL_HKPAY_WXPAY_NATIVE) ||

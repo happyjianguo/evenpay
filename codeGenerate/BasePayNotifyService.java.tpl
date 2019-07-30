@@ -25,7 +25,7 @@ import java.util.Map;
 @Service
 public class ${CLASS_NAME}PayNotifyService extends BasePayNotify {
 
-    private static final MyLog _log = MyLog.getLog(${CLASS_NAME}NotifyService.class);
+    private static final MyLog _log = MyLog.getLog(${CLASS_NAME}PayNotifyService.class);
 
     @Override
     public String getChannelName() {

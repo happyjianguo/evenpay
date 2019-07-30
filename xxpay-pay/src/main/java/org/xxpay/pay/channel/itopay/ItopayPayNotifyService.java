@@ -27,7 +27,7 @@ import java.util.SortedMap;
 @Service
 public class ItopayPayNotifyService extends BasePayNotify {
 
-    private static final MyLog _log = MyLog.getLog(ItopayNotifyService.class);
+    private static final MyLog _log = MyLog.getLog(ItopayPayNotifyService.class);
 
     @Override
     public String getChannelName() {
@@ -58,9 +58,9 @@ public class ItopayPayNotifyService extends BasePayNotify {
                 // 处理订单
                 byte payStatus = payOrder.getStatus(); // 0：订单生成，1：支付中，-1：支付失败，2：支付成功，3：业务处理完成，-2：订单过期
                 //渠道交易码
-                String transaction_id = params.getString("order_id");
+                String transaction_id = params.getString("trade_orderid");
                 if (payStatus != PayConstant.PAY_STATUS_SUCCESS && payStatus != PayConstant.PAY_STATUS_COMPLETE) {
-                    int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrder.getPayOrderId(), transaction_id, Util.buildSwiftpayAttach(params));
+                    int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrder.getPayOrderId(), transaction_id, params.toJSONString());
                     if (updatePayOrderRows != 1) {
                         _log.error("{}更新支付状态失败,将payOrderId={},更新payStatus={}失败", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
                         retObj.put(PayConstant.RESPONSE_RESULT, PayConstant.RETURN_SWIFTPAY_VALUE_FAIL);
@@ -129,8 +129,22 @@ public class ItopayPayNotifyService extends BasePayNotify {
     }
 
     //验证签名
-    private boolean checkParam (JSONObject params,String key){
-
-        return true;
+    public static boolean checkParam(JSONObject params,String key) {
+        boolean result = false;
+        String temp = params.get("siteid") +
+                "|" + params.get("paytypeid") +
+                "|" + params.get("mainmerchpaytypeid") +
+                "|" + params.get("trade_orderid") +
+                "|" + params.get("site_orderid") +
+                "|" + params.get("paymoney") +
+                "|" + params.get("over_datetime") +
+                "|" + params.get("status") +
+                "|" + key;
+        String signV = PayDigestUtil.digest(temp);
+        String sign = params.getString("sha1key");
+        if(!StringUtils.isEmpty(sign) && sign.equalsIgnoreCase(signV)) {
+            result = true;
+        }
+        return result;
     }
 }
