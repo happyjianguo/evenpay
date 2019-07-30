@@ -1,5 +1,5 @@
 .DS_Store
-
+.factory_path
 # .gitignore for maven 
 target/
 *.releaseBackup

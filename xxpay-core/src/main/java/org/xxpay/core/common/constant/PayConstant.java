@@ -42,6 +42,7 @@ public class PayConstant {
 	public final static String CHANNEL_NAME_YYKPAY = "yykpay"; 				// 渠道名称:易游酷支付
 	public final static String CHANNEL_NAME_HKPAY = "hikerpay"; 		    // 渠道名称:海科支付
 	public final static String CHANNEL_NAME_ITOPAY = "itopay";
+	public final static String CHANNEL_NAME_TWSEVENPAY = "twsevenpay"; 		// 渠道名称:1177pay
 
 
 	public final static String PAY_CHANNEL_SWIFTPAY_WXPAY_NATIVE = CHANNEL_NAME_SWIFTPAY + "_wxpay_native";			// 威富通微信扫码

@@ -4,6 +4,10 @@ import os,sys,re,traceback
 from datetime import datetime
 from string import Template
 import json
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 def generateChannelJavaCode(package_name, class_name, file_name,template):
     channelName = class_name.upper()
     path = "./" + class_name

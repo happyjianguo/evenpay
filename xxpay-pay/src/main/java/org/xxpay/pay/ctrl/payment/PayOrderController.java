@@ -78,6 +78,7 @@ public class PayOrderController extends BaseController {
             if(payOrder == null) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心下单失败", null, PayEnum.ERR_0010.getCode(), "生成支付订单失败"));
 
             String channelId = payOrder.getChannelId();
+            _log.info("get channel id = {}", channelId);
             String channelName = channelId.substring(0, channelId.indexOf("_"));
             try {
                 paymentInterface = (PaymentInterface) SpringUtil.getBean(channelName.toLowerCase() +  "PaymentService");
