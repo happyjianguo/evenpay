@@ -26,8 +26,8 @@ services:
   service:
     links:
       - "zookeeper"
-    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:latest
-    #image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:latest
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:mang
+    #image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:mang
     ports:
       - "8190:8190"
     restart: always
@@ -39,9 +39,9 @@ services:
       - "zookeeper"
       - "redis"
       - "activemq"
-    #image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:latest
-    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:latest
-    command: ["./latest.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
+    #image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:mang
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:mang
+    command: ["./wait.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
     ports:
       - "3020:3020"
     restart: always
@@ -54,8 +54,8 @@ services:
       - "mch"
       - "agent"
       - "pay"
-    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-manage:latest
-    command: ["./latest.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-manage:mang
+    command: ["./wait.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
     ports:
       - "8193:8193"
     restart: always
@@ -67,8 +67,8 @@ services:
       - "zookeeper"
       - "mch"
       - "pay"
-    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-agent:latest
-    command: ["./latest.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-agent:mang
+    command: ["./wait.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
     ports:
       - "8192:8192"
     restart: always
@@ -80,8 +80,8 @@ services:
     links:
       - "zookeeper"
       - "pay"
-    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-merchant:latest
-    command: ["./latest.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-merchant:mang
+    command: ["./wait.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
     ports:
       - "8191:8191"
     restart: always
@@ -91,8 +91,8 @@ services:
       - "service"
     links:
       - "zookeeper"
-    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:latest
-    command: ["./latest.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:mang
+    command: ["./wait.sh", "-t", "120", "service:8190", "--", "sh", "entry.sh"]
     ports:
       - "8194:8194"
     restart: always
