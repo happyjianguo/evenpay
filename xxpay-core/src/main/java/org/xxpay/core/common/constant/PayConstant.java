@@ -68,6 +68,7 @@ public class PayConstant {
 
 	public final static String PAY_CHANNEL_ITOPAY_WX_MWEB = CHANNEL_NAME_ITOPAY + "_wxpay_mweb"; //itopay 微信H5支付
 	public final static String PAY_CHANNEL_ITOPAY_ALI_MWEB = CHANNEL_NAME_ITOPAY + "_alipay_mweb";//itopay 支付宝H5支付
+	public final static String CHANNEL_NAME_TWSEVENPAY_VM = CHANNEL_NAME_TWSEVENPAY + "_vm";
 
 	public final static byte PAY_STATUS_EXPIRED = -2; 	// 订单过期
 	public final static byte PAY_STATUS_FAILED = -1; 	// 支付失败

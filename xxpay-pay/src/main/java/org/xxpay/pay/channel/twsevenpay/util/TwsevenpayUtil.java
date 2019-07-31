@@ -18,7 +18,7 @@ import cn.hutool.core.date.DatePattern;
 import java.util.stream.Collectors;
 
 public class TwsevenpayUtil{
-    public static final String PAY_URL = "";
+    public static final String PAY_URL = "/1177payment/api/acceptpayment";
     public static final String REFUND_URL = "";
     public static final String CANCEL_URL = "";
 
