@@ -41,7 +41,7 @@ else:
     tag = active
 
 print(os.environ['HOME'])
-print "active = {0}, region = {1}, tag={2}, commit={3}".format(active, region, tag, commit))
+print "active = {0}, region = {1}, tag={2}, commit={3}".format(active, region, tag, commit)
 
 project = 'xxpay'
 version = '1.0.0'

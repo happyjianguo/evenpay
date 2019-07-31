@@ -1,0 +1,38 @@
+language: java
+sudo: false
+
+jdk:
+  - oraclejdk8
+cache:
+  directories:
+  - .autoconf
+  - $HOME/.m2
+
+services:
+  - docker
+
+before_install:
+  - echo "hello install"
+install:
+  - echo "install"
+
+jobs:
+  include:
+    - stage: maven
+      script: mvn clean verify
+
+    - stage: build
+      script: 
+        - export DOCKER_USER=赚钱的大氓
+        - export DOCKER_PASS=6snC9AznJpjWZAw
+        - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin registry.cn-shenzhen.aliyuncs.com
+        - python package.py
+
+    - stage: test
+      script: echo "docker test" 
+
+    - stage: deploy
+      provider: script
+      script: echo "setup app!"
+      on:
+        branch: release
