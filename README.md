@@ -1,5 +1,7 @@
-# xxpay4dubbo
-xxpay商业版本，使用 springboot + dubbo 架构开发,支持分布式部署.
+[![Build Status](https://travis-ci.com/haodiaodemingzi/evenpay.svg?token=pbFzAatno6aX98hubsem&branch=master)](https://travis-ci.com/haodiaodemingzi/evenpay)
+
+# evenpay 聚合支付
+聚合支付渠道系统
 
 ### 开发说明
 
