@@ -9,6 +9,7 @@ active = 'dev'
 latest = 'latest'
 region = None
 app = None
+repo = None
 
 
 try:
@@ -76,10 +77,14 @@ for app in app_list:
         image_name = "registry.cn-{0}.aliyuncs.com/evencc/evenpay-{1}:{2}".format(region, app, item)
         cmd1 = "docker build -t {0} .".format(image_name)
         print cmd1
-        os.system(cmd1)
+        rc = os.system(cmd1)
+        if rc != 0:
+            raise Exception("build image failed")
 
         cmd2 = "docker push {0}".format(image_name)
         print cmd2
         os.system(cmd2)
+        if rc != 0:
+            raise Exception("push image failed")
 
     os.chdir(cwd)
