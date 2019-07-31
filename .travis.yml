@@ -1,0 +1,40 @@
+language: java
+sudo: false
+
+jdk:
+  - oraclejdk8
+
+services:
+  - docker
+
+before_install:
+  - echo "hello install"
+install:
+  - echo "install"
+
+jobs:
+  include:
+    - stage: maven
+      script: mvn clean verify
+    - stage: build
+      script: 
+        - export DOCKER_USER=赚钱的大氓
+        - export DOCKER_PASS=6snC9AznJpjWZAw
+        - python package.py
+    - stage: test
+      # docker run ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT} /go/src/github.com/kainlite/whatismyip-go/whatismyip-go.test
+      script: echo "docker test" 
+    - stage: push_docker_image
+      # docker run ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT} /go/src/github.com/kainlite/whatismyip-go/whatismyip-go.test
+      script: 
+        - docker build --no-cache -t ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT} .
+        - export DOCKER_USER=haodiaodemingzi
+        - export DOCKER_PASS=king1984td21
+        - export IMAGE=haodiaodemingzi/pipelines-go:${TRAVIS_COMMIT}
+        - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+        - docker push $IMAGE
+    - stage: deploy
+      provider: script
+      script: echo "setup app!"
+      on:
+        branch: release
