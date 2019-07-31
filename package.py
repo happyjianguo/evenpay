@@ -5,26 +5,28 @@ import sys
 import os
 import re
 
-active = sys.argv[1]
+active = 'dev'
 latest = 'latest'
 region = None
 app = None
 
 
 try:
-    region=sys.argv[2]
+    region=sys.argv[1]
 except:
     region = "shenzhen"
 try:
-    app = sys.argv[3]
+    app = sys.argv[2]
 except:
     pass
 
 
 env = os.environ
 
-branch = os.getenv('TRAVIS_REPO_SLUG', active)
+branch = os.getenv('TRAVIS_BRANCH', active)
 commit = os.getenv('TRAVIS_COMMIT', 'abcd123')
+print "branch === ", branch
+print "commit === ", commit
 tag = 'latest'
 
 if re.search(r'master|release', branch):
