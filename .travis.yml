@@ -16,6 +16,14 @@ before_install:
 install:
   - echo "install"
 
+notifications:
+  email:
+    recipients:
+      - yiming.jin@live.com
+      - gaofei2003@gmail.com
+    on_success: always
+    on_failure: always
+
 jobs:
   include:
     - stage: maven
