@@ -46,9 +46,3 @@ jobs:
         - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin $DOCKER_REPO
         - python package.py
       if: branch =~ /^(dev|test|staging).*$/
-
-    - stage: deploy
-      provider: script
-      script: echo "setup app!"
-      on:
-        branch: release
