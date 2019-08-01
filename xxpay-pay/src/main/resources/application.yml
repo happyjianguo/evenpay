@@ -31,6 +31,7 @@ spring:
       max-connections: 10
       idle-timeout: 30000  # 空闲的连接过期时间，默认为30秒
       expiry-timeout: 0 # 强制的连接过期时间，与idleTimeout的区别在于：idleTimeout是在连接空闲一段时间失效，而expiryTimeout不管当前连接的情况，只要达到指定时间就失效。默认为0，never
+
   freemarker:
     cache: false
     charset: UTF-8

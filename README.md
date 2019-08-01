@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/haodiaodemingzi/evenpay.svg?token=pbFzAatno6aX98hubsem&branch=master)](https://travis-ci.com/haodiaodemingzi/evenpay)
+[![Release version](https://img.shields.io/github/release/haodiaodemingzi/evenpay)](https://img.shields.io/github/release/haodiaodemingzi/evenpay)
 
 # evenpay 聚合支付
 聚合支付渠道系统
