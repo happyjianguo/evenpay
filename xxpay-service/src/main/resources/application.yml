@@ -17,6 +17,6 @@ spring:
     scan: org.xxpay.service.impl
 
 logging:
-  file: ./log/xxpay-service.log
+  file: /var/log/xxpay-service.log
   level:
     org.xxpay.service.dao.mapper: debug

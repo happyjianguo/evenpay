@@ -43,7 +43,7 @@ jwt:
   mchSecret: XxpPayGood
 
 logging:
-  file: ./log/xxpay-manage.log
+  file: /var/log/xxpay-manage.log
 
 config:
   mchQrUrl: @mch.site.url@/payment/qrcode

@@ -20,6 +20,6 @@ config:
   mchBillPath: @bill.root.path@/mch/
 
 logging:
-  file: ./log/xxpay-task.log
+  file: /var/log/xxpay-task.log
   level:
     root: info

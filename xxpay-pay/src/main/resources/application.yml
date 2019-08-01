@@ -47,7 +47,7 @@ spring:
       number_format: 0.##
 
 logging:
-  file: ./log/xxpay-pay.log
+  file: /var/log/xxpay-pay.log
 
 config:
   notifyUrl: @pay.site.url@/notify/%s/notify_res.htm

@@ -38,7 +38,7 @@ jwt:
   expiration: 604800 # 7天
 
 logging:
-  file: ./log/xxpay-merchant.log
+  file: /var/log/xxpay-merchant.log
 
 config:
   appId: wx077cb62e341f8a5c
