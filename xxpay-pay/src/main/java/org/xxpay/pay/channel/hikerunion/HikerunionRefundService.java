@@ -47,8 +47,50 @@ public class HikerunionRefundService extends BaseRefund {
         String orderId = refundOrder.getPayOrderId().replace("P","");
 
         Map<String, Object> post=new HashMap<String, Object>();
+        post.put("AMOUNT", String.valueOf(refundOrder.getRefundAmount()));// 总金额,单位分
+        post.put("CLIENTREF",orderId); //商户订单号
+        post.put("CLIENTKEY", payChannelConfig.getClientKey());
+        post.put("FUSEACTION", "main.refundApi");
+        post.put("EIRTHREF",refundOrder.getChannelOrderNo());
+        post.put("LANGUAGECODE", "EN");
+        post.put("CURRCODE","840");
+        post.put("VERSION", "1.0.0");
+        post.put("RETURNURL",payConfig.getNotifyUrl(getChannelName()));
+        //加签
+        String temp = PayDigestUtil.md5(payChannelConfig.getMchId()+"|"
+                +orderId+"|"
+                +post.get("AMOUNT")+"|"
+                +post.get("VERSION")+"|"
+                +PayDigestUtil.md5(payChannelConfig.getKey(),"utf-8"),"utf-8");
+        post.put("SIGNATURE", temp);
+        String reqUrl = payChannelConfig.getReqUrl();
+        _log.info("Hikerunion退款请求地址:{}", reqUrl);
+        _log.info("Hikerunion退款请求数据:{}", post.toString());
+        try{
+            HttpResponse result = HttpRequest.post(reqUrl)
+                    .form(post)
+                    .execute();
+            if (result.isOk()) {
+                Map<String,String> resultMap = XmlUtils.toMap(result.bodyBytes(),"utf-8");
+                String resultFlag = resultMap.get("resultFlag");
+                //0: General failure, 1: Refund succeeded, 2: Refund failed
+                if("1".equals(resultFlag)){
+                    retObj.put("obj", resultMap);
+                    retObj.put("status", "0");
+                    retObj.put("isSuccess", true);
+                    retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
+                }else {
 
-        
+                }
+            }else{
+                retObj.put("errDes", "查询操作失败!");
+                retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
+            }
+        } catch (Exception e) {
+            retObj.put("errDes", "查询操作失败!");
+            retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
+        }
+
         return retObj;
     }
 
