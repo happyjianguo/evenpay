@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 
 /**
@@ -51,6 +52,7 @@ public class HikerpayPayNotifyService extends BasePayNotify {
             String resString = XmlUtils.parseRequst(req);
             _log.info("[{}]回调通知参数,data={}", getChannelName(), resString);
 
+
             if (!StringUtils.isEmpty(resString)) {
                 JSONObject params = JSONObject.parseObject(resString);
                 payContext.put("parameters", params);
@@ -79,7 +81,7 @@ public class HikerpayPayNotifyService extends BasePayNotify {
             }
 
         }catch (Exception e) {
-            _log.error(e, logPrefix + "海科支付退款处理异常");
+            _log.error(e, logPrefix + "海科支付回调处理异常");
         }
         retObj.put(PayConstant.RESPONSE_RESULT, respString);
         return retObj;

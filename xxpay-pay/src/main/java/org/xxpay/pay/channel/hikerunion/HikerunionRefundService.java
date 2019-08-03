@@ -1,5 +1,6 @@
 package org.xxpay.pay.channel.hikerunion;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson.JSONObject;
@@ -72,15 +73,16 @@ public class HikerunionRefundService extends BaseRefund {
                     .execute();
             if (result.isOk()) {
                 Map<String,String> resultMap = XmlUtils.toMap(result.bodyBytes(),"utf-8");
-                String resultFlag = resultMap.get("resultFlag");
+                String resultFlag = resultMap.get("resultflag");
                 //0: General failure, 1: Refund succeeded, 2: Refund failed
-                if("1".equals(resultFlag)){
+                if(StrUtil.equals("1",resultFlag,true)){
                     retObj.put("obj", resultMap);
                     retObj.put("status", "0");
                     retObj.put("isSuccess", true);
                     retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
                 }else {
-
+                    retObj.put("errDes", "退款操作失败!");
+                    retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
                 }
             }else{
                 retObj.put("errDes", "查询操作失败!");
@@ -131,9 +133,9 @@ public class HikerunionRefundService extends BaseRefund {
                     .execute();
             if (result.isOk()) {
                 Map<String,String> resultMap = XmlUtils.toMap(result.bodyBytes(),"utf-8");
-                String refundFlag = resultMap.get("refundFlag");
+                String refundFlag = resultMap.get("refundflag");
                 //0: General failure, 1: Payment succeeded, 2: Payment failed, 3: Payment pending.
-                if("1".equals(refundFlag)){
+                if(StrUtil.equals("1",refundFlag,true)){
                     retObj.put("status", "0");
                     retObj.put("isSuccess", true);
                     //商户订单号

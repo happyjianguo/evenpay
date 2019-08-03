@@ -1,5 +1,6 @@
 package org.xxpay.pay.channel.hikerunion;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
@@ -45,7 +46,6 @@ public class HikerunionPaymentService extends BasePayment {
 
         //对方只支持纯数字订单号
         String orderId = payOrder.getPayOrderId().replace("P","");
-
         Map<String, Object> post=new HashMap<String, Object>();
         post.put("CLIENTREF",orderId); //商户订单号
         post.put("CLIENTKEY", payChannelConfig.getClientKey());
@@ -54,8 +54,8 @@ public class HikerunionPaymentService extends BasePayment {
         post.put("FUSEACTION", "main.cardEntry");
         post.put("LANGUAGECODE", "EN");
         post.put("REMARKS"," CategoryID:15");
-        post.put("FAILURL",payConfig.getNotifyUrl(getChannelName())+"?succeed=0");
-        post.put("SUCCESSURL",payConfig.getNotifyUrl(getChannelName())+"?succeed=1");
+        post.put("FAILURL",payConfig.getReturnUrl(getChannelName())+"?succeed=0");
+        post.put("SUCCESSURL",payConfig.getReturnUrl(getChannelName())+"?succeed=1");
         post.put("VERSION", "1.0.0");
         //加签
         String temp = PayDigestUtil.md5(payChannelConfig.getMchId()+"|"
@@ -112,13 +112,15 @@ public class HikerunionPaymentService extends BasePayment {
                     .form(post)
                     .execute();
             if (result.isOk()) {
+                //XmlUtils.toMap 字段名全部变小写
                 Map<String,String> resultMap = XmlUtils.toMap(result.bodyBytes(),"utf-8");
-                String resultFlag = resultMap.get("resultFlag");
+                _log.info("Hikerunion查询订单返回数据:{}", resultMap);
+                String resultFlag = resultMap.get("resultflag");
                 //0: General failure, 1: Payment succeeded, 2: Payment failed, 3: Payment pending.
-                if("1".equals(resultFlag)){
-                    retObj.put("status", "0");
+                if(StrUtil.equals("1",resultFlag,true)){
+                    retObj.put("status", "2");//支付成功
                 }else {
-                    retObj.put("status", "1");
+                    retObj.put("status", "1");//支付中
                 }
                 retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
             }else{

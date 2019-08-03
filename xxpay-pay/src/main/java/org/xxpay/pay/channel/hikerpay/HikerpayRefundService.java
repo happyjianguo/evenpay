@@ -1,5 +1,6 @@
 package org.xxpay.pay.channel.hikerpay;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -72,7 +73,7 @@ public class HikerpayRefundService extends BaseRefund {
                 _log.info("Hikerpass退款请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
                 String resultCode =  res.getString("result_code");
-                if (resultCode.equalsIgnoreCase("FINISHED")) {
+                if (StrUtil.equals("FINISHED",resultCode,true)) {
                     retObj.put("obj", res);
                     retObj.put("status", "0");
                     retObj.put("isSuccess", true);
@@ -142,7 +143,7 @@ public class HikerpayRefundService extends BaseRefund {
                 String result =  EntityUtils.toString(entity);
                 _log.info("Hikerpass请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
-                if ("SUCCESS".equals(res.getString("return_code"))) {
+                if (StrUtil.equals("SUCCESS",res.getString("return_code"),true)) {
                     // 交易状态
                     /*
                         • PAYING: Waiting for payment

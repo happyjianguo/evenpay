@@ -1,5 +1,6 @@
 package org.xxpay.pay.channel.hikerpay;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -106,7 +107,7 @@ public class HikerpayPaymentService extends BasePayment {
                 String result =  EntityUtils.toString(entity);
                 _log.info("Hikerpass请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
-                if ("SUCCESS".equals(res.getString("return_code"))) {
+                if (StrUtil.equals("SUCCESS",res.getString("return_code"),true)) {
                     String channelOrderNo = res.getString("order_id");//对方商户号
                     int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), channelOrderNo,res.toJSONString());
                     _log.info("[{}] Hikerpass 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
@@ -188,7 +189,7 @@ public class HikerpayPaymentService extends BasePayment {
                 String result =  EntityUtils.toString(entity);
                 _log.info("Hikerpass请求结果:{}", result);
                 JSONObject res =  JSONObject.parseObject(result);
-                if ("SUCCESS".equals(res.getString("return_code"))) {
+                if (StrUtil.equals("SUCCESS",res.getString("return_code"),true)) {
                     // 交易状态
                     /*
                         • PAYING: Waiting for payment
@@ -203,8 +204,8 @@ public class HikerpayPaymentService extends BasePayment {
                     */
                     String trade_state = res.getString("result_code");
                     retObj.put("obj", res);
-                    if("PAY_SUCCESS".equals(trade_state)){
-                        retObj.put("status", "0");
+                    if(StrUtil.equals("PAY_SUCCESS",trade_state,true)){
+                        retObj.put("status", "2");//支付成功
                     }else {
                         retObj.put("status", "1");
                     }
