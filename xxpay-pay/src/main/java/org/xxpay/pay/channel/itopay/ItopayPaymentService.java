@@ -1,5 +1,6 @@
 package org.xxpay.pay.channel.itopay;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -173,18 +174,16 @@ public class ItopayPaymentService extends BasePayment {
             httpPost.setEntity(entity);
         }
 
-//        StringEntity entityParams = new StringEntity(post.toString(), "utf-8");
-//        httpPost.setEntity(entityParams);
         //调用HTT请求函数
         JSONObject resObj = sendHttp(httpPost);
         if(resObj != null){
             /* 请求成功后对返回结果进行处理 */
             String trade_state = resObj.getJSONObject("data").getString("status");
             retObj.put("obj", resObj);
-            if("SUCCESS".equals(trade_state)){
-                retObj.put("status", "0");
+            if(StrUtil.equals("SUCCESS",trade_state,true)){
+                retObj.put("status", "2");//支付成功
             }else {
-                retObj.put("status", "1");
+                retObj.put("status", "1");//支付中
             }
             retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
         }else{
@@ -210,7 +209,7 @@ public class ItopayPaymentService extends BasePayment {
             _log.info("Itopay请求结果:{}", temp);
             temp = temp.replace("[","{").replace("]","}");
             res =  JSONObject.parseObject(temp);
-            if ("200".equals(res.getString("code"))) {
+            if (StrUtil.equals("200",res.getString("code"),true)) {
                 return res;
             }else {
                 res = null;
