@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.common.util.PayDigestUtil;
+import org.xxpay.core.common.util.XXPayUtil;
 import org.xxpay.core.entity.RefundOrder;
 import org.xxpay.pay.channel.BaseRefund;
 import org.xxpay.pay.channel.hikerpay.util.HikerUtil;
@@ -52,7 +53,7 @@ public class HikerunionRefundService extends BaseRefund {
         post.put("CLIENTREF",orderId); //商户订单号
         post.put("CLIENTKEY", payChannelConfig.getClientKey());
         post.put("FUSEACTION", "main.refundApi");
-        post.put("EIRTHREF",refundOrder.getChannelOrderNo());
+        post.put("EIRTHREF",refundOrder.getChannelPayOrderNo());
         post.put("LANGUAGECODE", "EN");
         post.put("CURRCODE","840");
         post.put("VERSION", "1.0.0");

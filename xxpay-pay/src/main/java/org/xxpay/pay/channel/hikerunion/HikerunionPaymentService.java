@@ -119,6 +119,12 @@ public class HikerunionPaymentService extends BasePayment {
                 //0: General failure, 1: Payment succeeded, 2: Payment failed, 3: Payment pending.
                 if(StrUtil.equals("1",resultFlag,true)){
                     retObj.put("status", "2");//支付成功
+                    String eirthref = resultMap.get("eirthref");
+                    //上游渠道号更新
+                    if(!StrUtil.isEmpty(eirthref)&&StrUtil.isEmpty(payOrder.getChannelOrderNo())) {
+                        payOrder.setChannelOrderNo(eirthref);
+                        rpcCommonService.rpcPayOrderService.updateByPayOrderId(payOrder.getPayOrderId(),payOrder);
+                    }
                 }else {
                     retObj.put("status", "1");//支付中
                 }

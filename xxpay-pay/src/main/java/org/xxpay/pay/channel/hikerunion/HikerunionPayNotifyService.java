@@ -60,7 +60,7 @@ public class HikerunionPayNotifyService extends BasePayNotify {
                 // 处理订单
                 byte payStatus = payOrder.getStatus(); // 0：订单生成，1：支付中，-1：支付失败，2：支付成功，3：业务处理完成，-2：订单过期
                 //渠道交易码
-                String transaction_id = params.getString("eirthRef");
+                String transaction_id = params.getString("eirthref");
                 if (payStatus != PayConstant.PAY_STATUS_SUCCESS && payStatus != PayConstant.PAY_STATUS_COMPLETE) {
                     int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrder.getPayOrderId(), transaction_id, params.toString());
                     if (updatePayOrderRows != 1) {
