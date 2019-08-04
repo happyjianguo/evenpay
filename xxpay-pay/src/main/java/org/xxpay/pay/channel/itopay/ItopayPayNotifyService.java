@@ -75,7 +75,7 @@ public class ItopayPayNotifyService extends BasePayNotify {
             }
 
         }catch (Exception e) {
-            _log.error(e, logPrefix + "ITOPAY支付退款处理异常");
+            _log.error(e, logPrefix + "ITOPAY支付回调处理异常");
         }
         retObj.put(PayConstant.RESPONSE_RESULT, respString);
         return retObj;
