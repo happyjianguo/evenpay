@@ -64,8 +64,10 @@ public class ItopayTransService extends BaseTrans {
             HttpResponse result = HttpRequest.post(reqUrl)
                     .form(post)
                     .execute();
+            _log.info("Itopay代付请求返回:{}",result.body());
             if (result.isOk()) {
-                JSONObject json = JSONObject.parseObject(result.body());
+                String body = result.body().replace("[","{").replace("]","}");
+                JSONObject json = JSONObject.parseObject(body);
                 if (StrUtil.equals("200",json.getString("code"))) {
                     retObj.put("isSuccess", true);
                     //更新渠道代付单号
@@ -107,8 +109,10 @@ public class ItopayTransService extends BaseTrans {
             HttpResponse result = HttpRequest.post(reqUrl)
                     .form(post)
                     .execute();
+            _log.info("Itopay代付查询请求返回:{}",result.body());
             if (result.isOk()) {
-                JSONObject json = JSONObject.parseObject(result.body());
+                String body = result.body().replace("[","{").replace("]","}");
+                JSONObject json = JSONObject.parseObject(body);
                 if (StrUtil.equals("200",json.getString("code"))) {
                     String trade_state = json.getJSONObject("data").getString("datastat");
                     retObj.put("obj", json);
