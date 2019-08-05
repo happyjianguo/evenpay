@@ -65,7 +65,7 @@ app_opt = {
 
 
 # mvn clean build
-os.system("mvn clean install -P" + tag)
+os.system("mvn clean install -P" + active)
 # for app in app_opt:
 for app in app_list:
     app_path = '-'.join([project,app])
