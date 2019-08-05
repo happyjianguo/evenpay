@@ -25,6 +25,7 @@ public class ItopayTransService extends BaseTrans {
         String logPrefix = "【全时新转账(代付)】";
         JSONObject retObj = buildRetObj();
         Map<String, Object> post=new HashMap<String, Object>();
+        _log.info("代付 transOrder {}",transOrder.toString());
         post.put("bankid","auto");
         post.put("siteid", payChannelConfig.getMchId());//商户号
         post.put("siteorderid", transOrder.getTransOrderId());
