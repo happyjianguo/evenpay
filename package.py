@@ -36,6 +36,7 @@ if re.search(r'master|release', branch):
     active = 'prod'
 elif re.search(r'test|staging', branch):
     tag = branch
+    region = "shenzhen"
     active = 'test'
 elif re.search(r'dev', branch):
     tag = 'dev'
@@ -64,7 +65,7 @@ app_opt = {
 
 
 # mvn clean build
-os.system("mvn clean install -P" + tag)
+os.system("mvn clean install -P" + active)
 # for app in app_opt:
 for app in app_list:
     app_path = '-'.join([project,app])
