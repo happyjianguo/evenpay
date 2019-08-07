@@ -36,7 +36,7 @@ if re.search(r'master|release', branch):
     active = 'prod'
 elif re.search(r'test|staging', branch):
     tag = branch
-    region = "shenzhen"
+    region = 'hongkong'
     active = 'test'
 elif re.search(r'dev', branch):
     tag = 'dev'
