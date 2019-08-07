@@ -43,7 +43,7 @@ jobs:
       script: 
         - export DOCKER_USER=赚钱的大氓
         - export DOCKER_PASS=6snC9AznJpjWZAw
-        - export DOCKER_REPO=registry.cn-hongkong.aliyuncs.com
+        - export DOCKER_REPO=registry.cn-shenzhen.aliyuncs.com
         - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin $DOCKER_REPO
         - python package.py
       if: branch =~ /^(dev|test|staging).*$/
