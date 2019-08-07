@@ -109,7 +109,7 @@ public class HikerpayPaymentService extends BasePayment {
                 JSONObject res =  JSONObject.parseObject(result);
                 if (StrUtil.equals("SUCCESS",res.getString("return_code"),true)) {
                     String channelOrderNo = res.getString("order_id");//对方商户号
-                    //如果保存返回结果集 会导致 超长
+                    //如果保存返回结果集会导致超长
                     int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), channelOrderNo);
                     _log.info("[{}] Hikerpass 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
                     JSONObject payInfo = new JSONObject();
@@ -141,6 +141,7 @@ public class HikerpayPaymentService extends BasePayment {
                 retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
             }
         }catch (Exception e){
+            _log.error(e.getMessage());
             retObj.put("errDes", "支付操作失败!");
             retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
             return retObj;
