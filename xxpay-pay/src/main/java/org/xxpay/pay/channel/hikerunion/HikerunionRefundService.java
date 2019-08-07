@@ -60,7 +60,7 @@ public class HikerunionRefundService extends BaseRefund {
         post.put("RETURNURL",payConfig.getNotifyUrl(getChannelName()));
         //加签
         String temp = PayDigestUtil.md5(payChannelConfig.getMchId()+"|"
-                +orderId+"|"
+                +post.get("CLIENTREF")+"|"
                 +post.get("AMOUNT")+"|"
                 +post.get("VERSION")+"|"
                 +PayDigestUtil.md5(payChannelConfig.getKey(),"utf-8"),"utf-8");

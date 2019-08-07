@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2.0'
 services:
   zookeeper:
     volumes:
@@ -9,3 +9,21 @@ services:
   activemq:
     volumes:
       - "/opt/activemq/data:/data/activemq"
+  service:
+    volumes:
+      - "/opt/service:/var/log/"
+  pay:
+    volumes:
+      - "/opt/pay:/var/log"
+  mgr:
+    volumes:
+      - "/opt/mgr:/var/log"
+  agent:
+    volumes:
+      - "/opt/agent:/var/log"
+  mch:
+    volumes:
+      - "/opt/mch:/var/log"
+  task:
+    volumes:
+      - "/opt/task:/var/log"
