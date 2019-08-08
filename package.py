@@ -15,7 +15,8 @@ repo = None
 try:
     region=sys.argv[1]
 except:
-    region = "shenzhen"
+    # github只能编译 hk 的镜像
+    region = "hongkong"
 try:
     app = sys.argv[2]
 except:
@@ -24,13 +25,13 @@ except:
 
 env = os.environ
 
-branch = os.getenv('TRAVIS_BRANCH', active)
+branch = os.getenv('TRAVIS_BRANCH', 'release')
 commit = os.getenv('TRAVIS_COMMIT', 'abcd123')
 print "branch === ", branch
 print "commit === ", commit
 tag = 'latest'
 
-if re.search(r'master|release', branch):
+if re.search(r'master', branch):
     tag = 'prod'
     region = 'hongkong'
     active = 'prod'
@@ -41,8 +42,12 @@ elif re.search(r'test|staging', branch):
 elif re.search(r'dev', branch):
     tag = 'dev'
     active = 'dev'
+elif re.search(r'release', branch):
+    tag = branch
+    active = 'prod'
 else:
-    tag = active
+    tag = branch
+    active = 'dev'
 
 print(os.environ['HOME'])
 print "active = {0}, region = {1}, tag={2}, commit={3}".format(active, region, tag, commit)

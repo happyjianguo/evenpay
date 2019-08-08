@@ -1,0 +1,126 @@
+version: '2'
+services:
+  activemq:
+    image: ivonet/activemq
+    environment:
+      ACTIVEMQ_ENABLED_AUTH: 'false'
+      ACTIVEMQ_MAX_MEMORY: '2048'
+      ACTIVEMQ_MIN_MEMORY: '512'
+    ports:
+    - 8161:8161/tcp
+    - 61616:61616/tcp
+    - 61613:61613/tcp
+    volumes:
+    - /opt/mq:/data/activemq
+  agent:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-agent:testgf
+    links:
+    - pay:pay
+    - mch:mch
+    - zookeeper:zookeeper
+    ports:
+    - 8192:8192/tcp
+    volumes:
+    - /opt/agent:/var/log
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  task:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-task:testgf
+    links:
+    - zookeeper:zookeeper
+    ports:
+    - 8194:8194/tcp
+    volumes:
+    - /opt/task:/var/log
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  mch:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-merchant:testgf
+    links:
+    - pay:pay
+    - zookeeper:zookeeper
+    ports:
+    - 8191:8191/tcp
+    volumes:
+    - /opt/mch:/var/log
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  zookeeper:
+    image: zookeeper:3.4.9
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
+    ports:
+    - 2181:2181/tcp
+    volumes:
+    - /opt/zookeeper:/data/zookeeper
+  service:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-service:testgf
+    links:
+    - zookeeper:zookeeper
+    ports:
+    - 8190:8190/tcp
+    volumes:
+    - /opt/service:/var/log
+  pay:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-pay:testgf
+    links:
+    - zookeeper:zookeeper
+    - redis:redis
+    - activemq:activemq
+    ports:
+    - 3020:3020/tcp
+    volumes:
+    - /opt/pay:/var/log
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  mgr:
+    image: registry.cn-shenzhen.aliyuncs.com/evencc/evenpay-manage:testgf
+    links:
+    - pay:pay
+    - mch:mch
+    - agent:agent
+    - zookeeper:zookeeper
+    ports:
+    - 8193:8193/tcp
+    volumes:
+    - /opt/mgr:/var/log
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  redis:
+    image: redis
+    ports:
+    - 6379:6379/tcp
+    volumes:
+    - /opt/redis:/data/redis
+    command:
+    - redis-server
