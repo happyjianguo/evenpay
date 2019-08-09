@@ -92,7 +92,7 @@ public class HikerunionPayNotifyService extends BasePayNotify {
         //校验结果是否成功
 
         // 商户订单号 根据对接文档修改参数名
-        String out_trade_no = "P"+params.get("clientRef");
+        String out_trade_no = HikerunionUtil.reduOrder(params.get("clientRef"));
         // 支付金额
         String total_fee = params.get("amount");
         if (StringUtils.isEmpty(total_fee)) {

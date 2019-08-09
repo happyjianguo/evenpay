@@ -1,5 +1,6 @@
 package org.xxpay.pay.channel.hikerunion;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -46,10 +47,11 @@ public class HikerunionRefundService extends BaseRefund {
         JSONObject retObj = new JSONObject();
 
         //对方只支持纯数字订单号
-        String orderId = refundOrder.getPayOrderId().replace("P","");
+        String orderId = HikerunionUtil.getOrder(refundOrder.getPayOrderId());
 
         Map<String, Object> post=new HashMap<String, Object>();
-        post.put("AMOUNT", String.valueOf(refundOrder.getRefundAmount()));// 总金额,单位分
+        //
+        post.put("AMOUNT", String.format("%012d",refundOrder.getRefundAmount()));//总金额,单位分12位不足补零
         post.put("CLIENTREF",orderId); //商户订单号
         post.put("CLIENTKEY", payChannelConfig.getClientKey());
         post.put("FUSEACTION", "main.refundApi");
@@ -60,7 +62,7 @@ public class HikerunionRefundService extends BaseRefund {
         post.put("RETURNURL",payConfig.getNotifyUrl(getChannelName()));
         //加签
         String temp = PayDigestUtil.md5(payChannelConfig.getMchId()+"|"
-                +post.get("CLIENTREF")+"|"
+                +post.get("EIRTHREF")+"|"
                 +post.get("AMOUNT")+"|"
                 +post.get("VERSION")+"|"
                 +PayDigestUtil.md5(payChannelConfig.getKey(),"utf-8"),"utf-8");
@@ -110,7 +112,7 @@ public class HikerunionRefundService extends BaseRefund {
         JSONObject retObj = new JSONObject();
         //String channelId = payOrder.getChannelId();
         //对方只支持纯数字订单号
-        String orderId = refundOrder.getPayOrderId().replace("P","");
+        String orderId = HikerunionUtil.getOrder(refundOrder.getPayOrderId());
 
         Map<String, Object> post=new HashMap<String, Object>();
         post.put("CLIENTREF",orderId); //商户订单号
