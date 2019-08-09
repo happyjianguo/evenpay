@@ -36,11 +36,11 @@ public class TwsevenpayPaymentService extends BasePayment {
     @Override
     public JSONObject pay(PayOrder payOrder) {
         // String channelId = payOrder.getChannelId();
-        TwsevenpayConfig payConfig = new TwsevenpayConfig(getPayParam(payOrder));
-        String key = payConfig.getKey();
-        String mchId = payConfig.getMchId();
+        TwsevenpayConfig payChannelConfig = new TwsevenpayConfig(getPayParam(payOrder));
+        String key = payChannelConfig.getKey();
+        String mchId = payChannelConfig.getMchId();
         String orderId = payOrder.getPayOrderId();
-        String reqURL = payConfig.getReqUrl();
+        String reqURL = payChannelConfig.getReqUrl();
 
         JSONObject retObj = new JSONObject();
         HashMap<String, Object> params = TwsevenpayUtil.buildPayParams(mchId, key, orderId, payOrder);
