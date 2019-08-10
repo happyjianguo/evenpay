@@ -63,18 +63,18 @@ public class YmpayPaymentService extends BasePayment {
         post.put("callbackUrl",payConfig.getNotifyUrl(getChannelName()));
         post.put("returnUrl",payConfig.getJumpUrl());
         post.put("goodsName",payOrder.getBody());
-        post.put("sign",PayDigestUtil.getSign(post,payChannelConfig.getKey()).toUpperCase());
-
         switch (channelId) {
             case PayConstant.PAY_CHANNEL_YMPAY_ALI_MWEB :
                 post.put("payType","4");
                 post.put("bankCode","alipay");
+                post.put("sign",PayDigestUtil.getSign(post,payChannelConfig.getKey()).toUpperCase());
                 break;
             case PayConstant.PAY_CHANNEL_YMPAY_CARD :
                 post.put("payType","6");
                 post.put("bankCode","jiaotong");
+                post.put("sign",PayDigestUtil.getSign(post,payChannelConfig.getKey()).toUpperCase());
                 //快捷支付直接返回拼接的请求url
-                String reqUrl = payChannelConfig.getReqUrl() + "?" + XXPayUtil.genUrlParams(post);
+                String reqUrl = payChannelConfig.getReqUrl() + "/pay/index?" + XXPayUtil.genUrlParams(post);
                 _log.info("YmPay支付请求地址:{}", reqUrl);
                 int resultDB = rpcCommonService.rpcPayOrderService.updateStatus4Ing(payOrder.getPayOrderId(), null,reqUrl);
                 _log.info("[{}] YmPay 更新订单状态为支付中:payOrderId={},prepayId={},result={}", getChannelName(), payOrder.getPayOrderId(), "", resultDB);
