@@ -45,6 +45,7 @@ public class PayConstant {
 	public final static String CHANNEL_NAME_ITOPAY = "itopay";
 	public final static String CHANNEL_NAME_TWSEVENPAY = "twsevenpay"; 		// 渠道名称:1177pay
 	public final static String CHANNEL_NAME_HIKERUNION = "hikerunion";
+	public final static String CHANNEL_NAME_YMPAY = "ympay";
 
 
 	public final static String PAY_CHANNEL_SWIFTPAY_WXPAY_NATIVE = CHANNEL_NAME_SWIFTPAY + "_wxpay_native";			// 威富通微信扫码
@@ -72,6 +73,10 @@ public class PayConstant {
 	public final static String PAY_CHANNEL_ITOPAY_ALI_MWEB = CHANNEL_NAME_ITOPAY + "_alipay_mweb";//itopay 支付宝H5支付
 	public final static String CHANNEL_NAME_TWSEVENPAY_VM = CHANNEL_NAME_TWSEVENPAY + "_vm";
 	public final static String CHANNEL_NAME_HIKERUNION_CARD = CHANNEL_NAME_HIKERUNION + "_card";
+
+	public final static String PAY_CHANNEL_YMPAY_ALI_MWEB = CHANNEL_NAME_YMPAY + "_alipay_mweb"; //一蒙支付宝H5
+	public final static String PAY_CHANNEL_YMPAY_CARD = CHANNEL_NAME_YMPAY + "_card"; //一蒙快捷支付
+
 
 	public final static byte PAY_STATUS_EXPIRED = -2; 	// 订单过期
 	public final static byte PAY_STATUS_FAILED = -1; 	// 支付失败
