@@ -6,11 +6,6 @@ jdk:
 
 services:
   - docker
-  
-cache:
-  directories:
-  - .autoconf
-  - $HOME/.m2
 
 before_install:
   - echo "hello install"

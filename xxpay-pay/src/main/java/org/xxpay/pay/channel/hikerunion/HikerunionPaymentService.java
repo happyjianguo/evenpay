@@ -45,7 +45,7 @@ public class HikerunionPaymentService extends BasePayment {
         JSONObject retObj = new JSONObject();
 
         //对方只支持纯数字订单号
-        String orderId = payOrder.getPayOrderId().replace("P","");
+        String orderId = HikerunionUtil.getOrder(payOrder.getPayOrderId());
         Map<String, Object> post=new HashMap<String, Object>();
         post.put("CLIENTREF",orderId); //商户订单号
         post.put("CLIENTKEY", payChannelConfig.getClientKey());
@@ -88,8 +88,8 @@ public class HikerunionPaymentService extends BasePayment {
         //String channelId = payOrder.getChannelId();
         HikerunionConfig payChannelConfig = new HikerunionConfig(getPayParam(payOrder));
         JSONObject retObj = new JSONObject();
-        //对方只支持纯数字订单号
-        String orderId = payOrder.getPayOrderId().replace("P","");
+        //对方只支持纯数字订单号位数小于等于18位
+        String orderId = HikerunionUtil.getOrder(payOrder.getPayOrderId());
 
         Map<String, Object> post=new HashMap<String, Object>();
         post.put("CLIENTREF",orderId); //商户订单号
@@ -121,10 +121,11 @@ public class HikerunionPaymentService extends BasePayment {
                     retObj.put("status", "2");//支付成功
                     String eirthref = resultMap.get("eirthref");
                     //上游渠道号更新
-                    if(!StrUtil.isEmpty(eirthref)&&StrUtil.isEmpty(payOrder.getChannelOrderNo())) {
-                        payOrder.setChannelOrderNo(eirthref);
-                        rpcCommonService.rpcPayOrderService.updateByPayOrderId(payOrder.getPayOrderId(),payOrder);
-                    }
+                    retObj.put("channelOrderNo", eirthref);
+//                    if(!StrUtil.isEmpty(eirthref)&&StrUtil.isEmpty(payOrder.getChannelOrderNo())) {
+//                        payOrder.setChannelOrderNo(eirthref);
+//                        rpcCommonService.rpcPayOrderService.updateByPayOrderId(payOrder.getPayOrderId(),payOrder);
+//                    }
                 }else {
                     retObj.put("status", "1");//支付中
                 }
