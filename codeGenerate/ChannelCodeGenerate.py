@@ -33,7 +33,7 @@ configuration = """
 {
   "packgename":"org.xxpay.pay.channel",
   "channelList":[
-    "Ympay"
+    "Yilian"
   ],
   "templates":[
       "BaseConfig.java.tpl",
