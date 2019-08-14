@@ -54,7 +54,7 @@ public class HikerunionPaymentService extends BasePayment {
         post.put("FUSEACTION", "main.cardEntry");
         post.put("LANGUAGECODE", "EN");
         post.put("REMARKS"," CategoryID:15");
-        post.put("FAILURL",payOrder.getReUrturnl()+"?succeed=0");
+        post.put("FAILURL",payOrder.getReturnUrl()+"?succeed=0");
         post.put("SUCCESSURL",payOrder.getReturnUrl()+"?succeed=1");
         post.put("VERSION", "1.0.0");
         //加签
