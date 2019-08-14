@@ -11,7 +11,7 @@ for i in "$APP_HOME"/lib/*.jar; do
    CLASSPATH="$CLASSPATH":"$i"
 done
 
+JAVA_OPTS="-ms512m -mx512m -Xmn128m -Djava.awt.headless=true -XX:MaxPermSize=64m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 # JAVA_OPTS="-ms512m -mx512m -Xmn128m -Djava.awt.headless=true -XX:MaxPermSize=64m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
-# JAVA_OPTS="-ms512m -mx512m -Xmn128m -Djava.awt.headless=true -XX:MaxPermSize=64m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
-JAVA_OPTS="-ms512m -mx512m -Xmn128m -Djava.awt.headless=true -XX:MaxPermSize=64m"
+#JAVA_OPTS="-ms512m -mx512m -Xmn128m -Djava.awt.headless=true -XX:MaxPermSize=64m"
 java $JAVA_OPTS -classpath $CLASSPATH $APP_MAINCLASS 
