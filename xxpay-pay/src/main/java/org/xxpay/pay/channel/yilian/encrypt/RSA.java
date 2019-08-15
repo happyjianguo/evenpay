@@ -1,6 +1,6 @@
 package org.xxpay.pay.channel.yilian.encrypt;
 
-import com.gaofei.test.yilian.util.Base64;
+import org.xxpay.pay.channel.yilian.util.Base64;
 
 import javax.crypto.Cipher;
 import java.io.FileInputStream;
