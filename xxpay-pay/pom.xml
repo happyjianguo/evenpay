@@ -222,7 +222,12 @@
             <version>1.0</version>
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/yeepay-cfca-PKIBASE.jar</systemPath>
         </dependency>
-
+        <!-- 易联代付依赖文件 -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
 
     <profiles>
