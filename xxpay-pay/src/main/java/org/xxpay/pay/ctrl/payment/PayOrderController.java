@@ -119,8 +119,6 @@ public class PayOrderController extends BaseController {
                 //return StringEscapeUtils.unescapeJava(XXPayUtil.makeRetData(retObj, payContext.getString("key")));
                 return XXPayUtil.makeRetData(retObj, payContext.getString("key"));
             }else {
-                //更新订单状态为失败不再进入查单任务
-                rpcCommonService.rpcPayOrderService.updateStatus4Fail(payOrder.getPayOrderId());
                 return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL,
                         "调用支付渠道失败" + (retObj.get(PayConstant.RETURN_PARAM_RETMSG) == null ? "" : ("(" + retObj.get(PayConstant.RETURN_PARAM_RETMSG) + ")")),
                         null, retObj.getString("errCode"), retObj.getString("errDes")));
