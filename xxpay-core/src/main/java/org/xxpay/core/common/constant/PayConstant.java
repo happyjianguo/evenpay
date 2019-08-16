@@ -47,6 +47,7 @@ public class PayConstant {
 	public final static String CHANNEL_NAME_HIKERUNION = "hikerunion"; //海科银联国际
 	public final static String CHANNEL_NAME_YMPAY = "ympay";//一蒙
 	public final static String CHANNEL_NAME_YILIAN = "yilian";//易联代付
+	public final static String CHANNEL_NAME_KUXIONG = "kuxiong";//酷熊
 
 
 	public final static String PAY_CHANNEL_SWIFTPAY_WXPAY_NATIVE = CHANNEL_NAME_SWIFTPAY + "_wxpay_native";			// 威富通微信扫码
