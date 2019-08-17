@@ -56,6 +56,8 @@ public class YilianTransService extends BaseTrans {
             body.setACC_NO(transOrder.getAccountNo());
             body.setACC_NAME(transOrder.getAccountName());
             body.setAMOUNT((transOrder.getAmount() / 100) + "");
+            body.setACC_PROVINCE(transOrder.getProvince());
+            body.setACC_CITY(transOrder.getCity());
             body.setBANK_NAME(transOrder.getBankName());
             body.setACC_PROP(transOrder.getAccountAttr() + "");
             body.setMER_ORDER_NO(transOrder.getMchTransNo());
@@ -69,18 +71,22 @@ public class YilianTransService extends BaseTrans {
                 String temp = res.body();
                 _log.info("Yilian 代付请求结果:{}", temp);
                 MsgBean res_bean = decryptANDverify(temp,payChannelConfig);
-                if (StrUtil.equals("0000",res_bean.getTRANS_STATE(),true)) {
+                MsgBody res_body = res_bean.getBODYS().get(0);
+                String stat = res_body.getPAY_STATE();
+                String remark = res_body.getREMARK();
+                if (StrUtil.equals("0000",stat,true)) {
                     //交易成功
                     _log.info("{} >>> 转账成功", "Yilian");
                     retObj.put("status", 2);    // 成功
-                } else if (StrUtil.equals("00A4",res_bean.getTRANS_STATE(),true)) {
+                } else if (StrUtil.equals("00A4",stat,true)) {
                     _log.info("{} >>> 转账处理中", "Yilian");
                     retObj.put("status", 1);    // 处理中
                 } else {
                     // 交易失败
                     _log.info("{} >>> 转账失败", "Yilian");
                     retObj.put("status", 3);    // 失败
-                    retObj.put("channelErrCode",res_bean.getTRANS_STATE());
+                    retObj.put("channelErrCode",stat);
+                    retObj.put("channelErrMsg",remark);
                 }
             }else{
                 _log.info("网络访问失败");
@@ -124,18 +130,22 @@ public class YilianTransService extends BaseTrans {
                 String temp = res.body();
                 _log.info("{} 代付查询请求结果:{}",logPrefix, temp);
                 MsgBean res_bean = decryptANDverify(temp,payChannelConfig);
-                if (StrUtil.equals("0000",res_bean.getTRANS_STATE(),true)) {
+                MsgBody res_body = res_bean.getBODYS().get(0);
+                String stat = res_body.getPAY_STATE();
+                String remark = res_body.getREMARK();
+                if (StrUtil.equals("0000",stat,true)) {
                     //交易成功
                     _log.info("{} >>> 转账成功", "Yilian");
                     retObj.put("status", 2);    // 成功
-                } else if (StrUtil.equals("00A4",res_bean.getTRANS_STATE(),true)) {
+                } else if (StrUtil.equals("00A4",stat,true)) {
                     _log.info("{} >>> 转账处理中", "Yilian");
                     retObj.put("status", 1);    // 处理中
                 } else {
                     // 交易失败
                     _log.info("{} >>> 转账失败 getTRANS_STATE {}", "Yilian",res_bean.getTRANS_STATE());
                     retObj.put("status", 3);    // 失败
-                    retObj.put("channelErrCode",res_bean.getTRANS_STATE());
+                    retObj.put("channelErrCode",stat);
+                    retObj.put("channelErrMsg",remark);
                 }
             }else {
                 _log.info("{} 代付查询请求结果:{}",logPrefix, res);
