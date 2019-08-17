@@ -42,7 +42,7 @@ public class YilianTransService extends BaseTrans {
     public JSONObject trans(TransOrder transOrder) {
         String channelId = transOrder.getChannelId();
         YilianConfig payChannelConfig = new YilianConfig(getTransParam(transOrder));
-        JSONObject retObj = new JSONObject();
+        JSONObject retObj = buildRetObj();
         try {
             MsgBean req_bean = new MsgBean();
             req_bean.setVERSION("2.1");
@@ -133,10 +133,12 @@ public class YilianTransService extends BaseTrans {
                     retObj.put("status", 1);    // 处理中
                 } else {
                     // 交易失败
-                    _log.info("{} >>> 转账失败", "Yilian");
+                    _log.info("{} >>> 转账失败 getTRANS_STATE {}", "Yilian",res_bean.getTRANS_STATE());
                     retObj.put("status", 3);    // 失败
                     retObj.put("channelErrCode",res_bean.getTRANS_STATE());
                 }
+            }else {
+                _log.info("{} 代付查询请求结果:{}",logPrefix, res);
             }
         }catch (Exception e) {
             _log.error(e, "易联代付查询异常");
