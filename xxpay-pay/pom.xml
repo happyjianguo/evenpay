@@ -18,6 +18,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
@@ -79,11 +83,7 @@
             <artifactId>commons-codec</artifactId>
             <version>1.6</version>
         </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
+
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.5</version>
+            <version>4.5.9</version>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
@@ -110,11 +110,7 @@
             <version>1.1.6</version>
         </dependency>
         <!-- sand_pay -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.2</version>
-        </dependency>
+
         <dependency>
             <groupId>cn.com.sand.online</groupId>
             <artifactId>agent-service-sdk</artifactId>
@@ -164,21 +160,7 @@
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/SADK-3.2.5.2.jar</systemPath>
         </dependency>
         <!-- max_pay -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.3.1</version>
-        </dependency>
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -222,7 +204,12 @@
             <version>1.0</version>
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/yeepay-cfca-PKIBASE.jar</systemPath>
         </dependency>
-
+        <!-- 易联代付依赖文件 -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
 
     <profiles>

@@ -104,6 +104,7 @@ public class YmpayPaymentService extends BasePayment {
                 retObj.put("payParams", payInfo);
                 retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_SUCCESS);
             }else{
+                _log.info(result.toString());
                 retObj.put("errDes", "支付操作失败!");
                 retObj.put(PayConstant.RETURN_PARAM_RETCODE, PayConstant.RETURN_VALUE_FAIL);
             }
