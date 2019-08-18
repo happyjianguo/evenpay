@@ -7,8 +7,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
+import org.xxpay.pay.util.PoolingHttpClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,9 @@ import java.io.IOException;
 public class BaseService {
 
     private static final MyLog _log = MyLog.getLog(BaseService.class);
+
+    @Autowired
+    private PoolingHttpClient httpClient;
 
     protected JSONObject buildRetObj() {
         JSONObject retObj = new JSONObject();
@@ -57,19 +62,12 @@ public class BaseService {
         CloseableHttpResponse response;
         CloseableHttpClient client = null;
         try {
-            client = HttpClients.createDefault();
-            response = client.execute(request);
+            //client = HttpClients.createDefault();
+            response = httpClient.execute(request);
             resObj = procRes(response);
         }catch (Exception e){
+            _log.info("发送请求失败 {} ",e.getMessage());
             return resObj;
-        }finally {
-            if(client != null){
-                try {
-                    client.close();
-                } catch (IOException e) {
-                    _log.error(e, "");
-                }
-            }
         }
         return resObj;
     }

@@ -123,10 +123,6 @@ public class HikerunionPaymentService extends BasePayment {
                     String eirthref = resultMap.get("eirthref");
                     //上游渠道号更新
                     retObj.put("channelOrderNo", eirthref);
-//                    if(!StrUtil.isEmpty(eirthref)&&StrUtil.isEmpty(payOrder.getChannelOrderNo())) {
-//                        payOrder.setChannelOrderNo(eirthref);
-//                        rpcCommonService.rpcPayOrderService.updateByPayOrderId(payOrder.getPayOrderId(),payOrder);
-//                    }
                 }else {
                     retObj.put("status", "1");//支付中
                 }

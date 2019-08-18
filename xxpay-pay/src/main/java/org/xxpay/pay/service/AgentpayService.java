@@ -145,9 +145,13 @@ public class AgentpayService {
         paramMap.put("notifyUrl", agentpayNotifyUrl);                   // 异步回调URL
         paramMap.put("param1", "");                                     // 扩展参数1
         paramMap.put("param2", "");                                     // 扩展参数2
+        paramMap.put("bankName",mchAgentpayRecord.getBankName());//开户行名称
+        paramMap.put("province",mchAgentpayRecord.getProvince());
+        paramMap.put("city",mchAgentpayRecord.getCity());
         paramMap.put("remarkInfo", mchAgentpayRecord.getRemark());
         paramMap.put("accountName", mchAgentpayRecord.getAccountName());
         paramMap.put("accountNo", mchAgentpayRecord.getAccountNo());
+        paramMap.put("accountAttr",mchAgentpayRecord.getAccountAttr());//账户属性0对私1对公
         String reqSign = PayDigestUtil.getSign(paramMap, mchInfo.getPrivateKey());
         paramMap.put("sign", reqSign);   // 签名
         _log.info("[trans_req]{}", paramMap);

@@ -71,7 +71,7 @@ public class AgentpayController extends BaseController {
             }
             // 查询最新代付记录
             mchAgentpayRecord = rpcCommonService.rpcMchAgentpayService.findByAgentpayOrderId(mchAgentpayRecord.getAgentpayOrderId());
-            Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
+            Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, mchAgentpayRecord.getTransMsg(), PayConstant.RETURN_VALUE_SUCCESS, null);
             // 返回的参数
             map.put("agentpayOrderId", mchAgentpayRecord.getAgentpayOrderId());
             map.put("status", mchAgentpayRecord.getStatus());
