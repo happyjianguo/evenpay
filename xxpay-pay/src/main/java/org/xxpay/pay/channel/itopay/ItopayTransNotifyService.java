@@ -2,6 +2,7 @@ package org.xxpay.pay.channel.itopay;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
@@ -19,6 +20,7 @@ import java.util.SortedMap;
  * @date: 2019-08-04 16:52:31
  * @description: ITOPAY转账回调
  */
+@Service
 public class ItopayTransNotifyService extends BaseTransNotify {
     private static final MyLog _log = MyLog.getLog(ItopayTransNotifyService.class);
 

@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Service;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.common.util.PayDigestUtil;
@@ -12,6 +13,12 @@ import org.xxpay.pay.channel.BaseTrans;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author: gf
+ * @date: 2019-08-14 19:35:44
+ * @description: YILIAN代付接口
+ */
+@Service
 public class ItopayTransService extends BaseTrans {
     private static final MyLog _log = MyLog.getLog(ItopayTransService.class);
 

@@ -108,6 +108,7 @@ public class AgentpayController extends BaseController {
         String province = params.getString("province");         // 开户行所在省份
         String city = params.getString("city");                 // 开户行所在市
         String bankName = params.getString("bankName");         // 开户行名称
+        String bankNetName = params.getString("bankNetName");   // 开户网点名称
         String bankNumber = params.getString("bankNumber");     // 联行号
         String notifyUrl = params.getString("notifyUrl"); 		// 转账结果回调URL
         String remark = params.getString("remark");	            // 备注
@@ -229,6 +230,7 @@ public class AgentpayController extends BaseController {
         mchAgentpayRecord.setNotifyUrl(notifyUrl);
         mchAgentpayRecord.setRemark(remark);
         mchAgentpayRecord.setExtra(extra);
+        mchAgentpayRecord.setBankNetName(bankNetName);
         return mchAgentpayRecord;
     }
 
