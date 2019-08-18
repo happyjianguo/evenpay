@@ -71,12 +71,14 @@ public class ItopayTransService extends BaseTrans {
                 JSONObject json = JSONObject.parseObject(body);
                 if (StrUtil.equals("200",json.getString("code"))) {
                     retObj.put("isSuccess", true);
+                    retObj.put("status", 2);    // 成功
                     //更新渠道代付单号
                     retObj.put("channelOrderNo", json.getJSONObject("data").getString("myorderid"));
                 }else{
                     //出现业务错误
                     _log.info("{}返回失败", logPrefix);
                     _log.info("sub_code:{} sub_msg:{}}", json.getString("code"),json.getString("msg"));
+                    retObj.put("status", 3);    // 失败
                     retObj.put("channelErrCode", json.getString("code"));
                     retObj.put("channelErrMsg", json.getString("msg"));
                 }

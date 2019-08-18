@@ -100,7 +100,7 @@ public class QueryPayOrderController extends BaseController {
         map.put("status", StrUtil.toString(payOrder.getStatus()));
         map.put("channelUser", StrUtil.toString(payOrder.getChannelUser()));
         map.put("channelOrderNo", StrUtil.toString(payOrder.getChannelOrderNo()));
-        map.put("channelAttach", "".equals(StrUtil.toString(payOrder.getChannelAttach())) ? "" : JSONObject.parse(payOrder.getChannelAttach()));
+        map.put("channelAttach", StrUtil.toString(payOrder.getChannelAttach()));
         map.put("paySuccTime", "".equals(StrUtil.toString(payOrder.getPaySuccTime())) ? "" : payOrder.getPaySuccTime().getTime());
         return map;
     }
