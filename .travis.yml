@@ -8,7 +8,7 @@ services:
   - docker
 
 before_install:
-  - echo "hello install"
+  - echo "hello install public"
 install:
   - echo "install"
 
