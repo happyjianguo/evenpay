@@ -151,6 +151,7 @@ public class AgentpayService {
         paramMap.put("remarkInfo", mchAgentpayRecord.getRemark());
         paramMap.put("accountName", mchAgentpayRecord.getAccountName());
         paramMap.put("accountNo", mchAgentpayRecord.getAccountNo());
+        paramMap.put("extra",mchAgentpayRecord.getBankNetName());
         paramMap.put("accountAttr",mchAgentpayRecord.getAccountAttr());//账户属性0对私1对公
         String reqSign = PayDigestUtil.getSign(paramMap, mchInfo.getPrivateKey());
         paramMap.put("sign", reqSign);   // 签名
