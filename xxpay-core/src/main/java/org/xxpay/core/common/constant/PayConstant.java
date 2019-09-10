@@ -91,6 +91,7 @@ public class PayConstant {
 	public final static byte PAY_STATUS_SUCCESS = 2; 	// 支付成功
 	public final static byte PAY_STATUS_COMPLETE = 3; 	// 业务完成
 	public final static byte PAY_STATUS_REFUND = 4; 	// 已退款
+	public final static byte PAY_STATUS_DEDUCTION = 5; 	// 支付成功(扣量)
 
 	public final static byte TRANS_STATUS_INIT = 0; 		// 初始态
 	public final static byte TRANS_STATUS_TRANING = 1; 		// 转账中
