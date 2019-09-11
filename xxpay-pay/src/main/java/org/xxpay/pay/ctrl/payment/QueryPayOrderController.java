@@ -97,7 +97,12 @@ public class QueryPayOrderController extends BaseController {
         map.put("mchOrderNo", StrUtil.toString(payOrder.getMchOrderNo()));
         map.put("amount", StrUtil.toString(payOrder.getAmount()));
         map.put("currency", StrUtil.toString(payOrder.getCurrency()));
-        map.put("status", StrUtil.toString(payOrder.getStatus()));
+        //如果状态为已扣量返回给客户为失败状态
+        if(payOrder.getStatus() == PayConstant.PAY_STATUS_DEDUCTION) {
+            map.put("status", StrUtil.toString(PayConstant.PAY_STATUS_FAILED));
+        }else{
+            map.put("status", StrUtil.toString(payOrder.getStatus()));
+        }
         map.put("channelUser", StrUtil.toString(payOrder.getChannelUser()));
         map.put("channelOrderNo", StrUtil.toString(payOrder.getChannelOrderNo()));
         map.put("channelAttach", StrUtil.toString(payOrder.getChannelAttach()));
