@@ -49,6 +49,8 @@ public interface IPayOrderService {
 
     int updateStatus4Success(String payOrderId, String channelOrderNo, String channelAttach);
 
+    int updateStatus4Deduction(String payOrderId, String channelOrderNo, String channelAttach);
+
     int updateStatus4Complete(String payOrderId);
 
     int createPayOrder(PayOrder payOrder);

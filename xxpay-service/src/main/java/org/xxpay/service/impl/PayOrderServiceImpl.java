@@ -113,6 +113,21 @@ public class PayOrderServiceImpl implements IPayOrderService {
     }
 
     @Transactional(transactionManager = "transactionManager", rollbackFor = Exception.class)
+    public int updateStatus4Deduction(String payOrderId, String channelOrderNo, String channelAttach) {
+        PayOrder payOrder = new PayOrder();
+        payOrder.setPayOrderId(payOrderId);
+        payOrder.setStatus(PayConstant.PAY_STATUS_DEDUCTION);
+        payOrder.setPaySuccTime(new Date());
+        if(StringUtils.isNotBlank(channelOrderNo)) payOrder.setChannelOrderNo(channelOrderNo);
+        if(StringUtils.isNotBlank(channelAttach)) payOrder.setChannelAttach(channelAttach);
+        PayOrderExample example = new PayOrderExample();
+        PayOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andPayOrderIdEqualTo(payOrderId);
+        criteria.andStatusEqualTo(PayConstant.PAY_STATUS_PAYING);
+        return updateSuccess4Transactional(payOrder, example);
+    }
+
+    @Transactional(transactionManager = "transactionManager", rollbackFor = Exception.class)
     int updateSuccess4Transactional(PayOrder payOrder, PayOrderExample example) {
         int count = payOrderMapper.updateByExampleSelective(payOrder, example);
         // 更新成功且为平台账户,增加商户资金账户流水记录
