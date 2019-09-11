@@ -1,11 +1,12 @@
 package org.xxpay.core.common.util;
 
 import com.alibaba.fastjson.JSONObject;
+import sun.misc.BASE64Decoder;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.*;
 
 /**
@@ -74,6 +75,53 @@ public class PayDigestUtil {
 		}
 
 		return output.toString();
+	}
+
+	public static Map<String, Object> sortMapByKey(Map<String, Object> map) {
+		if (map == null || map.isEmpty()) {
+			return null;
+		}
+
+		Map<String, Object> sortMap = new TreeMap<String, Object>(
+				new MapKeyComparator());
+
+		sortMap.putAll(map);
+
+		return sortMap;
+	}
+
+	public static String getRSASign(Map<String, Object> post, String key) throws Exception {
+		String returnstr = "";
+		Map<String, Object> map = sortMapByKey(post);
+		Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Object> entry = it.next();
+			returnstr += "&" + entry.getKey() + "=" + entry.getValue();
+		}
+		returnstr = returnstr.substring(1);
+
+		return getMD5withRSASign(returnstr,key);
+	}
+
+	// 用md5生成内容摘要，再用RSA的私钥加密，进而生成数字签名
+	public static String getMD5withRSASign(String content, String key) throws Exception {
+		PrivateKey privateKey = getPrivateKey(key);
+		byte[] contentBytes = content.getBytes("utf-8");
+		// 返回MD5withRSA签名算法的 Signature对象
+		Signature signature = Signature.getInstance("MD5withRSA");
+		signature.initSign(privateKey);
+		signature.update(contentBytes);
+		byte[] signs = signature.sign();
+		return org.apache.commons.codec.binary.Base64.encodeBase64String(signs);
+	}
+
+	public static PrivateKey getPrivateKey(String key) throws Exception {
+		byte[] keyBytes;
+		keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+		return privateKey;
 	}
 
 	/**
@@ -229,5 +277,12 @@ public class PayDigestUtil {
 		
 		System.out.println(md5(dataStr, "UTF-8"));
 		System.out.println(md5(dataStr, "GBK"));
+	}
+}
+
+class MapKeyComparator implements Comparator<String> {
+
+	public int compare(String str1, String str2) {
+		return str1.compareTo(str2);
 	}
 }
