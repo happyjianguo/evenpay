@@ -1,4 +1,4 @@
-package org.xxpay.pay.channel.dragonPay;
+package org.xxpay.pay.channel.dragonpay;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Component;

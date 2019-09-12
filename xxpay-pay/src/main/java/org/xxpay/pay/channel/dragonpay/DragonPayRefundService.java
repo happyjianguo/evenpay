@@ -1,22 +1,11 @@
-package org.xxpay.pay.channel.dragonPay;
+package org.xxpay.pay.channel.dragonpay;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.entity.RefundOrder;
 import org.xxpay.pay.channel.BaseRefund;
-import org.xxpay.pay.channel.hikerpay.util.HikerUtil;
-
-import java.io.IOException;
 
 /**
  * @author: gf
