@@ -53,7 +53,19 @@ public class DoupayPaymentService extends BasePayment {
         post.put("interface_version","V3.1");
         post.put("order_amount", (payOrder.getAmount()/100));
         post.put("notify_url", payConfig.getNotifyUrl(getChannelName()));
-        post.put("service_type", "alipay_h5api");
+        //支付宝H5 微信H5
+        switch (channelId) {
+            case PayConstant.PAY_CHANNEL_DOUPAY_ALI_H5 :
+                post.put("service_type", "alipay_h5api");
+                break;
+            case PayConstant.PAY_CHANNEL_DOUPAY_WEIXIN_H5 :
+                post.put("service_type", "weixin_h5api");
+                break;
+            default:
+                retObj = buildRetObj(PayConstant.RETURN_VALUE_FAIL, "不支持的渠道[channelId="+channelId+"]");
+                break;
+        }
+
         post.put("order_time", time);
         post.put("product_name", "test");
         post.put("client_ip", "222.240.116.55");
