@@ -51,7 +51,7 @@ public class DoupayPaymentService extends BasePayment {
         String time=format.format(new Date());
         post.put("order_no", payOrder.getPayOrderId());
         post.put("interface_version","V3.1");
-        post.put("order_amount", (payOrder.getAmount()*100));
+        post.put("order_amount", (payOrder.getAmount()/100));
         post.put("notify_url", payConfig.getNotifyUrl(getChannelName()));
         post.put("service_type", "alipay_h5api");
         post.put("order_time", time);
