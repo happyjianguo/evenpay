@@ -114,7 +114,7 @@ public class DoupayPaymentService extends BasePayment {
         post.put("merchant_code",payChannelConfig.getMchId());
         post.put("order_no", payOrder.getPayOrderId());
         post.put("interface_version","V3.1");
-        post.put("service_type", "alipay_h5api");
+        post.put("service_type", "single_trade_query");
         try {
             String sign = PayDigestUtil.getRSASign(post,payChannelConfig.getKey());
             post.put("sign_type", "RSA-S");
@@ -123,8 +123,9 @@ public class DoupayPaymentService extends BasePayment {
                     .form(post)
                     .execute();
             if (result.isOk()) {
-                String body = result.body().replace("<dinpay>","")
+                String body = result.body().replace("</response>","")
                         .replace("</dinpay>","");
+                body = body.substring(body.indexOf("<trade>"));
                 Map<String,String> resultMap = XmlUtils.toMap(body.getBytes(Charset.forName("UTF-8")),"utf-8");
                 _log.info("DouPay 查询订单返回数据:{}", resultMap);
                 if (StrUtil.equals(resultMap.get("trade_status"),"SUCCESS")) {
