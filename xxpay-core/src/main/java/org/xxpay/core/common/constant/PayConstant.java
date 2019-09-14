@@ -81,7 +81,7 @@ public class PayConstant {
 	public final static String PAY_CHANNEL_YMPAY_ALI_MWEB = CHANNEL_NAME_YMPAY + "_alipay_mweb"; //一蒙支付宝H5
 	public final static String PAY_CHANNEL_YMPAY_CARD = CHANNEL_NAME_YMPAY + "_card"; //一蒙快捷支付
 	public final static String PAY_CHANNEL_DOUPAY_ALI_H5 = CHANNEL_NAME_DOUPAY + "_alipay_h5api";
-	public final static String PAY_CHANNEL_DOUPAY_WEIXIN_H5 = CHANNEL_NAME_DOUPAY + "_weixin_h5api`";
+	public final static String PAY_CHANNEL_DOUPAY_WEIXIN_H5 = CHANNEL_NAME_DOUPAY + "_weixin_h5api";
 
 
 	public final static byte PAY_STATUS_EXPIRED = -2; 	// 订单过期
