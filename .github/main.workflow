@@ -5,7 +5,7 @@ workflow "Build my code" {
 
 action "Docker Login" {
   uses = "actions/docker/login@master"
-  secrets = ["haodiaodemingzi", "king1984td21"]
+  secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
   env = {
     DOCKER_REGISTRY_URL = "index.docker.io/v1/"
   }
