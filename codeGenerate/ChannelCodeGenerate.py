@@ -13,10 +13,10 @@ def generateChannelJavaCode(package_name, class_name, file_name,template):
     print("filePath: %s",filePath)
     if os.path.exists(path) == False:
         os.makedirs(path)
-    class_file = open(filePath,'w')
+    class_file = open(filePath,'w',encoding='UTF-8')
     lines = []
     #模版文件
-    template_file = open(template,'r')
+    template_file = open(template,'r',encoding='UTF-8')
     tmpl = Template(template_file.read())
     #模版替换
     lines.append(tmpl.substitute(
@@ -33,7 +33,7 @@ configuration = """
 {
   "packgename":"org.xxpay.pay.channel",
   "channelList":[
-    "Kuxiong"
+    "DouPay"
   ],
   "templates":[
       "BaseConfig.java.tpl",
