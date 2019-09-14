@@ -12,6 +12,7 @@ action "Docker Login" {
 }
 
 action "Build image" {
+  needs = ["Docker Login"]
   uses = "docker://isuper/java-oracle:jdk_8"
   runs = "python"
   args = "action_build.py"
