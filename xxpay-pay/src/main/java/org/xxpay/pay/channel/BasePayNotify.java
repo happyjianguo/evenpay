@@ -3,16 +3,21 @@ package org.xxpay.pay.channel;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.xxpay.core.common.Exception.ServiceException;
 import org.xxpay.core.common.constant.MchConstant;
 import org.xxpay.core.common.constant.PayConstant;
 import org.xxpay.core.common.constant.RetEnum;
+import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.entity.PayOrder;
 import org.xxpay.core.entity.PayPassageAccount;
+import org.xxpay.pay.channel.hikerpay.HikerpayPayNotifyService;
 import org.xxpay.pay.mq.BaseNotify4MchPay;
 import org.xxpay.pay.service.RpcCommonService;
 import org.xxpay.pay.util.Util;
+
+import java.util.Random;
 
 /**
  * @author: dingzhiwei
@@ -21,6 +26,12 @@ import org.xxpay.pay.util.Util;
  */
 @Component
 public abstract class BasePayNotify extends BaseService implements PayNotifyInterface {
+
+
+    private static final MyLog _log = MyLog.getLog(HikerpayPayNotifyService.class);
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     public RpcCommonService rpcCommonService;
@@ -59,22 +70,26 @@ public abstract class BasePayNotify extends BaseService implements PayNotifyInte
         return payParam;
     }
 
-    protected void notifyChannel(PayOrder payOrder,String transaction_id,JSONObject params) {
-        // 处理订单
-        byte payStatus = payOrder.getStatus(); // 0：订单生成，1：支付中，-1：支付失败，2：支付成功，3：业务处理完成，-2：订单过期
-        //渠道交易码
-        if (payStatus != PayConstant.PAY_STATUS_SUCCESS && payStatus != PayConstant.PAY_STATUS_COMPLETE) {
-            int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrder.getPayOrderId(), transaction_id, params.toJSONString());
-            if (updatePayOrderRows != 1) {
-                _log.error("{}更新支付状态失败,将payOrderId={},更新payStatus={}失败", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
-                retObj.put(PayConstant.RESPONSE_RESULT, PayConstant.RETURN_SWIFTPAY_VALUE_FAIL);
-                return retObj;
+    //是否需要扣量，根据商户ID查询redis变量值。mch.20000000 商户ID
+    public boolean isDeduction(PayOrder payOrder,String channelOrderNo) {
+        // 判断redis中是否有扣量比例值
+        String key = "mch."+payOrder.getChannelMchId();
+        if(stringRedisTemplate.hasKey(key)) {
+            String value = stringRedisTemplate.opsForValue().get(key);
+            int percentage =  Integer.parseInt(value);;// 根据 redis 里面的值来决定命中百分比 0-100的数字为扣量百分比
+            Random random = new Random();
+            int i = random.nextInt(99);
+            if(i>=0&&i<percentage) {
+                //命中处理
+                int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Deduction(payOrder.getPayOrderId(),channelOrderNo,"");
+                if (updatePayOrderRows != 1) {
+                    _log.error("商户 {} 扣量成功,payOrderId= {}", payOrder.getChannelMchId(), payOrder.getPayOrderId());
+                    return true;
+                }else{
+                    _log.error("商户 {} 扣量失败,payOrderId= {}", payOrder.getChannelMchId(), payOrder.getPayOrderId());
+                }
             }
-            _log.error("{}更新支付状态成功,将payOrderId={},更新payStatus={}成功", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
-            payOrder.setStatus(PayConstant.PAY_STATUS_SUCCESS);
         }
-        baseNotify4MchPay.doNotify(payOrder, true);
-        _log.info("====== 完成处理YMPAY支付回调通知 ======");
+        return false;
     }
-
 }
