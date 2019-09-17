@@ -114,6 +114,7 @@ public enum RetEnum {
     RET_MGR_CASH_COLL_PID_EXISTS(13017, "该分账账户已存在，请修改"),
     RET_MGR_CASH_COLL_IS_NOT_ALIPAY(13018, "该支付通道不可配置分账记录"),
     RET_MGR_NOT_HANDLE(13019, "当前状态无需处理"),
+    RET_MGR_NOT_VALID_DEDUTION(13020, "错误的扣量百分比"),
 
     RET_MGR_WX_ACCOUNT_EXIST(13100, "微信账号已存在"),
     RET_MGR_WX_USER_NOT_EXIST(13101, "微信用户不存在"),
