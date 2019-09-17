@@ -14,6 +14,15 @@ spring:
       #address: zookeeper://zookeeper:2181
       address: @zookeeper.url@
     scan: org.xxpay.manage
+  redis:
+    host: @redis.ip@
+    password: @redis.pass@
+    port: @redis.port@
+    pool:
+      max-idle: 100
+      min-idle: 1
+      max-active: 1000
+      max-wait: -1
   freemarker:
     cache: false
     charset: UTF-8

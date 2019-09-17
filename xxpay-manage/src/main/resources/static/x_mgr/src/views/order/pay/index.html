@@ -53,6 +53,7 @@
                     <option value="-1">支付失败</option>
                     <option value="3">处理完成</option>
                     <option value="4">已退款</option>
+                    <option value="5">已扣量</option>
                   </select>
                 </div>
                 <button id="search" class="layui-btn" data-type="reload">搜索</button>
@@ -166,6 +167,8 @@ layui.use(['admin', 'table', 'util', 'laydate'], function(){
       return "<span style='color: darkgreen'>处理完成</span>";
     }else if(d.status == 4) {
       return "<span style='color: red'>已退款</span>";
+    }else if(d.status == 5) {
+      return "<span style='color: lightyellow'>已扣量</span>";
     }
   };
 

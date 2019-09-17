@@ -130,12 +130,15 @@ layui.use(['admin', 'table', 'util', 'laydate'], function(){
       return "<span style='color: green'>支付成功</span>";
     }else if(d.status == -1) {
       return "<span style='color: red'>支付失败</span>";
+    }else if(d.status == 5) {
+      return "<span style='color: red'>支付失败</span>";
     }else if(d.status == 3) {
       return "<span style='color: darkgreen'>处理完成</span>";
     }else if(d.status == 4) {
       return "<span style='color: red'>已退款</span>";
     }
-  };
+  }
+};
 
   // 初始化统计结果
   $.setCountResult();

@@ -1,0 +1,116 @@
+<div class="layui-card-header layui-card">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>商户管理</cite></a>
+        <a><cite>扣量变更</cite></a>
+    </di>
+</dijj>
+
+
+<div class="layui-fluid" id="LAY-app-message">
+    <div class="layui-card">
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">扣量变更</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-form-item">
+                    <blockquote class="layui-elem-quote" id="amountTip"></blockquote>
+                </div>
+                <div class="layui-tab-item layui-show">
+                    <form class="layui-form center">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="mchId" name="mchId" lay-verify="required" autocomplete="off"
+                                    class="layui-input" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">扣量百分比(%)</label>
+                            <div class="layui-input-inline">
+                                <input type="text"  required id="amount" name="dedutionVal" lay-verify="required|number"
+                                    placeholder="1-100的整数" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">超级密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" required name="password" lay-verify="required|pass"
+                                    placeholder="请输入超级密码" autocomplete="off" class="layui-input pwd">
+                            </div>
+                        </div>
+                        <div class="layui-form-item ">
+                            <div class="layui-input-block">
+                                <button type="button" lay-submit lay-filter="btnCredit"
+                                        class="layui-btn layui-btn-normal">确定</button>
+                                <a class="layui-btn" lay-href="merchant/list/">返回</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'util', 'admin'], function () {
+        var form = layui.form
+            , $ = layui.$
+            , admin = layui.admin
+            , upload = layui.upload
+            , element = layui.element;
+
+        element.render('breadcrumb', 'breadcrumb');//渲染导航信息
+        var router = layui.router();
+        var mchId = router.search.mchId;
+        admin.req({
+            type: 'get',
+            url: layui.setter.baseUrl + '/mch_dedution/get?mchId=' + mchId,
+            error: function (err) {
+                layer.alert(err.msg, { title: '请求失败' })
+            },
+            success: function (res) {
+                if (res.code == 0 && res.data != null) {
+                    $('#mchId').val(res.data.mchId);
+                    $('#amount').val(res.data.dedutionVal);
+                }
+            }
+        });
+
+        form.on('submit(btnCredit)', function (data) {
+            var amount = $("#amount").val();
+            layer.confirm('确定为商户设置扣量为(' + amount + ")么?", function (index) {
+                admin.req({
+                    type: 'post',
+                    url: layui.setter.baseUrl + '/mch_dedution/config',
+                    data: data.field,
+                    error: function (err) {
+                        layer.alert(err.msg, { title: '请求失败' })
+                    },
+                    success: function (res) {
+                        if (res.code == 0) {
+                            if(res.err != null) {
+                                layer.alert("扣量成功!", { title: "提示" }, function (index) {
+                                    window.location.reload();
+                                })
+                            }else {
+                                layer.alert("扣量成功!", {title: "提示"}, function (index) {
+                                    layer.close(index);
+                                    location.hash = '/merchant/list/';
+                                })
+                            }
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+            return false;//阻止跳转
+        });
+
+        form.render();
+
+    })
+</script>
