@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(Constant.MCH_CONTROLLER_ROOT_PATH + "/pay_order")
@@ -66,7 +68,25 @@ public class PayOrderController extends BaseController {
         if(count == 0) return ResponseEntity.ok(XxPayPageRes.buildSuccess());
         List<PayOrder> payOrderList = rpcCommonService.rpcPayOrderService.select(getUser().getId(),
                 (getPageIndex(page) -1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
-        return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
+
+        // 代理商户和商户不能显示扣量订单，需要把扣量的单子加入到失败的订单记录里，
+        // 当status=-1的时候,设置status=5再查询一次，push到返回list
+        if (payOrder.getStatus() == -1) {
+            payOrder.setStatus((byte) 5);
+        }
+        List<PayOrder> dedutionList = rpcCommonService.rpcPayOrderService.select(
+                (getPageIndex(page) - 1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
+        if (dedutionList.isEmpty()){
+            return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
+        }
+        List<PayOrder> joinedList = Stream.of(payOrderList, dedutionList)
+                .flatMap(x -> x.stream())
+                .collect(Collectors.toList());
+
+        // 代理商户和商户不能显示扣量订单，需要把扣量的单子加入到失败的订单记录里，
+        // 当status=-1的时候,设置status=5再查询一次，push到返回list
+
+        return ResponseEntity.ok(XxPayPageRes.buildSuccess(joinedList, count));
     }
 
     /**

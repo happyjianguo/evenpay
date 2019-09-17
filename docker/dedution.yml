@@ -1,0 +1,108 @@
+version: '2'
+services:
+  activemq:
+    image: ivonet/activemq
+    environment:
+      ACTIVEMQ_ENABLED_AUTH: 'false'
+      ACTIVEMQ_MAX_MEMORY: '2048'
+      ACTIVEMQ_MIN_MEMORY: '512'
+    ports:
+    - 8161:8161/tcp
+    - 61616:61616/tcp
+    - 61613:61613/tcp
+  agent:
+    image: evenpay-agent:test
+    links:
+    - pay:pay
+    - mch:mch
+    - zookeeper:zookeeper
+    ports:
+    - 8192:8192/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  task:
+    image: evenpay-task:test
+    links:
+    - zookeeper:zookeeper
+    ports:
+    - 8194:8194/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  mch:
+    image: evenpay-merchant:test
+    links:
+    - pay:pay
+    - zookeeper:zookeeper
+    ports:
+    - 8191:8191/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  zookeeper:
+    image: zookeeper:3.4.9
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
+    ports:
+    - 2181:2181/tcp
+  service:
+    image: evenpay-service:test
+    links:
+    - zookeeper:zookeeper
+    ports:
+    - 8190:8190/tcp
+  pay:
+    image: evenpay-pay:test
+    links:
+    - zookeeper:zookeeper
+    - redis:redis
+    - activemq:activemq
+    ports:
+    - 3020:3020/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  mgr:
+    image: evenpay-manage:test
+    links:
+    - pay:pay
+    - mch:mch
+    - agent:agent
+    - zookeeper:zookeeper
+    ports:
+    - 8193:8193/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - service:8190
+    - --
+    - sh
+    - entry.sh
+  redis:
+    image: redis
+    ports:
+    - 6379:6379/tcp
+    command:
+    - redis-server
