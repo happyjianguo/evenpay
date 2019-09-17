@@ -27,11 +27,8 @@ import java.util.Random;
 @Component
 public abstract class BasePayNotify extends BaseService implements PayNotifyInterface {
 
-
-    private static final MyLog _log = MyLog.getLog(HikerpayPayNotifyService.class);
-
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    public Util util;
 
     @Autowired
     public RpcCommonService rpcCommonService;
@@ -68,28 +65,5 @@ public abstract class BasePayNotify extends BaseService implements PayNotifyInte
             throw new ServiceException(RetEnum.RET_MGR_PAY_PASSAGE_ACCOUNT_NOT_EXIST);
         }
         return payParam;
-    }
-
-    //是否需要扣量，根据商户ID查询redis变量值。mch.20000000 商户ID
-    public boolean isDeduction(PayOrder payOrder,String channelOrderNo) {
-        // 判断redis中是否有扣量比例值
-        String key = "mch."+payOrder.getChannelMchId();
-        if(stringRedisTemplate.hasKey(key)) {
-            String value = stringRedisTemplate.opsForValue().get(key);
-            int percentage =  Integer.parseInt(value);;// 根据 redis 里面的值来决定命中百分比 0-100的数字为扣量百分比
-            Random random = new Random();
-            int i = random.nextInt(99);
-            if(i>=0&&i<percentage) {
-                //命中处理
-                int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Deduction(payOrder.getPayOrderId(),channelOrderNo,"");
-                if (updatePayOrderRows != 1) {
-                    _log.error("商户 {} 扣量成功,payOrderId= {}", payOrder.getChannelMchId(), payOrder.getPayOrderId());
-                    return true;
-                }else{
-                    _log.error("商户 {} 扣量失败,payOrderId= {}", payOrder.getChannelMchId(), payOrder.getPayOrderId());
-                }
-            }
-        }
-        return false;
     }
 }

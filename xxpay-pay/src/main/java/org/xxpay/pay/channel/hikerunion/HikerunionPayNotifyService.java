@@ -3,6 +3,7 @@ package org.xxpay.pay.channel.hikerunion;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.xxpay.core.common.constant.PayConstant;
@@ -62,6 +63,13 @@ public class HikerunionPayNotifyService extends BasePayNotify {
                 //渠道交易码
                 String transaction_id = params.getString("eirthref");
                 if (payStatus != PayConstant.PAY_STATUS_SUCCESS && payStatus != PayConstant.PAY_STATUS_COMPLETE) {
+                    if(util.isDeduction(payOrder,transaction_id)){
+                        //扣量成功不再通知下级渠道。
+                        _log.error("{}扣量成功将payOrderId={},更新payStatus={}扣量",logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_DEDUCTION);
+                        respString = PayConstant.RETURN_SWIFTPAY_VALUE_SUCCESS;
+                        retObj.put(PayConstant.RESPONSE_RESULT, respString);
+                        return retObj;
+                    }
                     int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrder.getPayOrderId(), transaction_id, params.toString());
                     if (updatePayOrderRows != 1) {
                         _log.error("{}更新支付状态失败,将payOrderId={},更新payStatus={}失败", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
