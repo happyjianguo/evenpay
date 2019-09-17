@@ -1,16 +1,31 @@
 package org.xxpay.pay.util;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import org.xxpay.core.common.constant.PayConstant;
+import org.xxpay.core.entity.PayOrder;
+import org.xxpay.pay.service.RpcCommonService;
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author: dingzhiwei
  * @date: 17/12/25
  * @description:
  */
+
+@Component
 public class Util {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    public RpcCommonService rpcCommonService;
 
     public static boolean retIsSuccess(JSONObject retObj) {
         if(retObj == null) return false;
@@ -41,4 +56,24 @@ public class Util {
         return jumpForm.toString();
     }
 
+
+    //是否需要扣量，根据商户ID查询redis变量值。mch.20000000 商户ID
+    public  boolean isDeduction(PayOrder payOrder, String channelOrderNo) {
+        // 判断redis中是否有扣量比例值
+        String key = "mch."+payOrder.getChannelMchId();
+        if(stringRedisTemplate.hasKey(key)) {
+            String value = stringRedisTemplate.opsForValue().get(key);
+            int percentage =  Integer.parseInt(value);;// 根据 redis 里面的值来决定命中百分比 0-100的数字为扣量百分比
+            Random random = new Random();
+            int i = random.nextInt(99);
+            if(i>=0&&i<percentage) {
+                //命中处理
+                int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Deduction(payOrder.getPayOrderId(),channelOrderNo,"");
+                if (updatePayOrderRows != 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
