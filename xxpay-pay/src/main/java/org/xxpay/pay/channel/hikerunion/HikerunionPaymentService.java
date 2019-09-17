@@ -137,5 +137,4 @@ public class HikerunionPaymentService extends BasePayment {
         }
         return retObj;
     }
-
 }
