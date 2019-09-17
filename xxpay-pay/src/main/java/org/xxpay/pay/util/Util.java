@@ -60,10 +60,11 @@ public class Util {
     //是否需要扣量，根据商户ID查询redis变量值。mch.20000000 商户ID
     public  boolean isDeduction(PayOrder payOrder, String channelOrderNo) {
         // 判断redis中是否有扣量比例值
-        String key = "mch."+payOrder.getChannelMchId();
+        String key = "mch."+payOrder.getMchId();
         if(stringRedisTemplate.hasKey(key)) {
             String value = stringRedisTemplate.opsForValue().get(key);
-            int percentage =  Integer.parseInt(value);;// 根据 redis 里面的值来决定命中百分比 0-100的数字为扣量百分比
+            int percentage =  100;
+                    //Integer.parseInt(value);;// 根据 redis 里面的值来决定命中百分比 0-100的数字为扣量百分比
             Random random = new Random();
             int i = random.nextInt(99);
             if(i>=0&&i<percentage) {
