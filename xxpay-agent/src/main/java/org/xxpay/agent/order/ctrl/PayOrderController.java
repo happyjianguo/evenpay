@@ -67,28 +67,26 @@ public class PayOrderController extends BaseController {
         if (StringUtils.isNotBlank(createTimeEndStr)) createTimeEnd = DateUtil.str2date(createTimeEndStr);
 
         int count = rpcCommonService.rpcPayOrderService.count(payOrder, createTimeStart, createTimeEnd);
-        if (count == 0) return ResponseEntity.ok(XxPayPageRes.buildSuccess());
-        List<PayOrder> payOrderList = rpcCommonService.rpcPayOrderService.select(
-                (getPageIndex(page) - 1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
+        if(count == 0 && payOrder.getStatus() == null)  return ResponseEntity.ok(XxPayPageRes.buildSuccess());
+        List<PayOrder> payOrderList = rpcCommonService.rpcPayOrderService.select(getUser().getId(),
+                (getPageIndex(page) -1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
 
         // 代理商户和商户不能显示扣量订单，需要把扣量的单子加入到失败的订单记录里，
         // 当status=-1的时候,设置status=5再查询一次，push到返回list
-        if (payOrder.getStatus() == -1) {
+        if(payOrder.getStatus() != null && payOrder.getStatus() == -1){
             payOrder.setStatus((byte) 5);
+            List<PayOrder> dedutionList = rpcCommonService.rpcPayOrderService.select(
+                    (getPageIndex(page) - 1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
+            if (dedutionList != null && dedutionList.size() <= 0){
+                return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
+            }
+            List<PayOrder> joinedList = Stream.of(payOrderList, dedutionList)
+                    .flatMap(x -> x.stream())
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(XxPayPageRes.buildSuccess(joinedList, count));
         }
-        List<PayOrder> dedutionList = rpcCommonService.rpcPayOrderService.select(
-                (getPageIndex(page) - 1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
-        if (dedutionList.isEmpty()){
-            return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
-        }
-        List<PayOrder> joinedList = Stream.of(payOrderList, dedutionList)
-                .flatMap(x -> x.stream())
-                .collect(Collectors.toList());
 
-        // 代理商户和商户不能显示扣量订单，需要把扣量的单子加入到失败的订单记录里，
-        // 当status=-1的时候,设置status=5再查询一次，push到返回list
-
-        return ResponseEntity.ok(XxPayPageRes.buildSuccess(joinedList, count));
+        return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
     }
 
     /**
