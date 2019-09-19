@@ -89,6 +89,13 @@ public interface PayOrderMapper {
      */
     Map count4Fail(Map param);
 
+    /**
+     * 统计扣量订单
+     * @param param
+     * @return
+     */
+    Map count5Dedution(Map param);
+
     List<Map> daySuccessRate(Map param);
 
     List<Map> hourSuccessRate(Map param);

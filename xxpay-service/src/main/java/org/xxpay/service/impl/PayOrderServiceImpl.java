@@ -395,6 +395,7 @@ public class PayOrderServiceImpl implements IPayOrderService {
         return payOrderMapper.count4Fail(param);
     }
 
+
     @Override
     public List<Map> daySuccessRate(int offset, int limit, String createTimeStart, String createTimeEnd, Long mchId) {
         Map param = new HashMap<>();
@@ -503,6 +504,20 @@ public class PayOrderServiceImpl implements IPayOrderService {
             return null;
         }
         return orderList.get(0);
+    }
+
+    @Override
+    public Map count5Dedution(Long agentId, Long mchId, Long productId, String payOrderId, String mchOrderNo, Byte productType, String createTimeStart, String createTimeEnd) {
+        Map param = new HashMap<>();
+        if(agentId != null) param.put("agentId", agentId);
+        if(mchId != null) param.put("mchId", mchId);
+        if(productId != null && productId != -99) param.put("productId", productId);
+        if(StringUtils.isNotBlank(payOrderId)) param.put("payOrderId", payOrderId);
+        if(StringUtils.isNotBlank(mchOrderNo)) param.put("mchOrderNo", mchOrderNo);
+        if(productType != null && productType != -99) param.put("productType", productType);
+        if(StringUtils.isNotBlank(createTimeStart)) param.put("createTimeStart", createTimeStart);
+        if(StringUtils.isNotBlank(createTimeEnd)) param.put("createTimeEnd", createTimeEnd);
+        return payOrderMapper.count5Dedution(param);
     }
 
     void setCriteria(PayOrderExample.Criteria criteria, PayOrder payOrder, Date createTimeStart, Date createTimeEnd) {
