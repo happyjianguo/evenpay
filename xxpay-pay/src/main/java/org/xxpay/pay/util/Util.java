@@ -6,8 +6,10 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.xxpay.core.common.constant.PayConstant;
+import org.xxpay.core.common.util.MyLog;
 import org.xxpay.core.entity.PayOrder;
 import org.xxpay.pay.service.RpcCommonService;
+import org.xxpay.pay.task.ReissuePayScheduled;
 
 import java.util.Map;
 import java.util.Random;
@@ -20,6 +22,7 @@ import java.util.Random;
 
 @Component
 public class Util {
+    private static final MyLog _log = MyLog.getLog(Util.class);
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -63,15 +66,22 @@ public class Util {
         String key = "mch."+payOrder.getMchId();
         if(stringRedisTemplate.hasKey(key)) {
             String value = stringRedisTemplate.opsForValue().get(key);
+            _log.info("渠道{}扣量处理开始扣量比例为{}% payOrderId={}",payOrder.getMchId(),value,payOrder.getPayOrderId());
             int percentage =  Integer.parseInt(value);// 根据 redis 里面的值来决定命中百分比 0-100的数字为扣量百分比
             Random random = new Random();
             int i = random.nextInt(99);
             if(i>=0&&i<percentage) {
                 //命中处理
+                _log.info("扣量处理命中 payOrderId={}",payOrder.getPayOrderId());
                 int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Deduction(payOrder.getPayOrderId(),channelOrderNo,"");
-                if (updatePayOrderRows != 1) {
+                if (updatePayOrderRows == 1) {
+                    _log.info("扣量数据库更新成功 payOrderId={}",payOrder.getPayOrderId());
                     return true;
+                }else{
+                    _log.info("扣量数据库更新失败 payOrderId={}",payOrder.getPayOrderId());
                 }
+            }else{
+                _log.info("扣量处理未命中 payOrderId={}",payOrder.getPayOrderId());
             }
         }
         return false;

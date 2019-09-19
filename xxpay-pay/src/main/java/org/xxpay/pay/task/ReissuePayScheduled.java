@@ -113,7 +113,6 @@ public class ReissuePayScheduled extends ReissuceBase {
                                 }
                             }
                         }
-
                     }
                 }
                 _log.info("{}处理完毕payOrderId={}.耗时:{} ms", logPrefix, payOrderId, System.currentTimeMillis() - startTime);
