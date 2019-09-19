@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(Constant.MCH_CONTROLLER_ROOT_PATH + "/pay_order")
@@ -63,9 +65,25 @@ public class PayOrderController extends BaseController {
         if(StringUtils.isNotBlank(createTimeEndStr)) createTimeEnd = DateUtil.str2date(createTimeEndStr);
 
         int count = rpcCommonService.rpcPayOrderService.count(getUser().getId(), payOrder, createTimeStart, createTimeEnd);
-        if(count == 0) return ResponseEntity.ok(XxPayPageRes.buildSuccess());
+        if(count == 0 && payOrder.getStatus() == null)  return ResponseEntity.ok(XxPayPageRes.buildSuccess());
         List<PayOrder> payOrderList = rpcCommonService.rpcPayOrderService.select(getUser().getId(),
                 (getPageIndex(page) -1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
+
+        // 代理商户和商户不能显示扣量订单，需要把扣量的单子加入到失败的订单记录里，
+        // 当status=-1的时候,设置status=5再查询一次，push到返回list
+        if(payOrder.getStatus() != null && payOrder.getStatus() == -1){
+            payOrder.setStatus((byte) 5);
+            List<PayOrder> dedutionList = rpcCommonService.rpcPayOrderService.select(
+                    (getPageIndex(page) - 1) * getPageSize(limit), getPageSize(limit), payOrder, createTimeStart, createTimeEnd);
+            if (dedutionList != null && dedutionList.size() <= 0){
+                return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
+            }
+            List<PayOrder> joinedList = Stream.of(payOrderList, dedutionList)
+                    .flatMap(x -> x.stream())
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(XxPayPageRes.buildSuccess(joinedList, count));
+        }
+
         return ResponseEntity.ok(XxPayPageRes.buildSuccess(payOrderList, count));
     }
 
@@ -90,14 +108,22 @@ public class PayOrderController extends BaseController {
         Map successMap = rpcCommonService.rpcPayOrderService.count4Success(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
         Map failMap = rpcCommonService.rpcPayOrderService.count4Fail(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
 
+        // 商户被扣量的订单应该统计到失败的订单里面汇总
+        Map dedutionMap = rpcCommonService.rpcPayOrderService.count5Dedution(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
+        Number failTotalCount = (Number) failMap.get("totalCount");
+        Number dedutionTotalCount = (Number) dedutionMap.get("totalCount");
+        Number failTotalAmount = (Number) failMap.get("totalAmount");
+        Number dedutionTotalAmount = (Number) failMap.get("totalAmount");
+
         JSONObject obj = new JSONObject();
         obj.put("allTotalCount", allMap.get("totalCount"));                         // 所有订单数
         obj.put("allTotalAmount", allMap.get("totalAmount"));                       // 总金额
         obj.put("successTotalCount", successMap.get("totalCount"));                 // 成功订单数
         obj.put("successTotalAmount", successMap.get("totalAmount"));               // 成功金额
         obj.put("successTotalMchIncome", successMap.get("totalMchIncome"));         // 成功商户收入
-        obj.put("failTotalCount", failMap.get("totalCount"));                       // 未完成订单数
-        obj.put("failTotalAmount", failMap.get("totalAmount"));                     // 未完成金额
+        obj.put("failTotalCount", failTotalCount.intValue() + dedutionTotalCount.intValue()); // 未完成订单数
+        obj.put("failTotalAmount", failTotalAmount.intValue() + dedutionTotalAmount.intValue()); // 未完成金额
+
         return ResponseEntity.ok(XxPayResponse.buildSuccess(obj));
     }
 

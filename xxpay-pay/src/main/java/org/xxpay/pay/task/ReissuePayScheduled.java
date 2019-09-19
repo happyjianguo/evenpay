@@ -16,6 +16,7 @@ import org.xxpay.pay.mq.BaseNotify4CashColl;
 import org.xxpay.pay.mq.BaseNotify4MchPay;
 import org.xxpay.pay.service.RpcCommonService;
 import org.xxpay.pay.util.SpringUtil;
+import org.xxpay.pay.util.Util;
 
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,9 @@ import java.util.List;
  */
 @Component
 public class ReissuePayScheduled extends ReissuceBase {
+
+    @Autowired
+    public Util util;
 
     @Autowired
     private RpcCommonService rpcCommonService;
@@ -91,17 +95,22 @@ public class ReissuePayScheduled extends ReissuceBase {
                     int status = retObj.getInteger("status");
                     if(status == 2) {
                         String channelOrderNo = retObj.getString("channelOrderNo");
-                        int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrderId, channelOrderNo);
-                        _log.info("{}更新支付订单状态为成功({}),payOrderId={},返回结果:{}", logPrefix, PayConstant.PAY_STATUS_SUCCESS, payOrderId, updatePayOrderRows);
-                        if (updatePayOrderRows == 1) {
-                            payOrder.setStatus(PayConstant.TRANS_STATUS_SUCCESS);
-                            // 通知业务系统
-                            payOrder = rpcCommonService.rpcPayOrderService.findByPayOrderId(payOrderId);
-                            baseNotify4MchPay.doNotify(payOrder, true);
+                        if (util.isDeduction(payOrder,channelOrderNo)) {
+                            //扣量成功不再通知下级渠道。
+                            _log.error("{}扣量成功将payOrderId={},更新payStatus={}扣量",logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_DEDUCTION);
+                        }else{
+                            int updatePayOrderRows = rpcCommonService.rpcPayOrderService.updateStatus4Success(payOrderId, channelOrderNo);
+                            _log.info("{}更新支付订单状态为成功({}),payOrderId={},返回结果:{}", logPrefix, PayConstant.PAY_STATUS_SUCCESS, payOrderId, updatePayOrderRows);
+                            if (updatePayOrderRows == 1) {
+                                payOrder.setStatus(PayConstant.TRANS_STATUS_SUCCESS);
+                                // 通知业务系统
+                                payOrder = rpcCommonService.rpcPayOrderService.findByPayOrderId(payOrderId);
+                                baseNotify4MchPay.doNotify(payOrder, true);
 
-                            //资金归集
-                            if("alipay_qr_pc".equals(payOrder.getChannelId()) || "alipay_qr_h5".equals(payOrder.getChannelId())){
-                                baseNotify4CashColl.doNotify(payOrderId);
+                                //资金归集
+                                if("alipay_qr_pc".equals(payOrder.getChannelId()) || "alipay_qr_h5".equals(payOrder.getChannelId())){
+                                    baseNotify4CashColl.doNotify(payOrderId);
+                                }
                             }
                         }
                     }

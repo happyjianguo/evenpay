@@ -1,0 +1,107 @@
+version: '2'
+services:
+  activemq:
+    image: ivonet/activemq
+    network_mode: "host"
+    environment:
+      ACTIVEMQ_ENABLED_AUTH: 'false'
+      ACTIVEMQ_MAX_MEMORY: '2048'
+      ACTIVEMQ_MIN_MEMORY: '512'
+
+    ports:
+    - 8161:8161/tcp
+    - 61616:61616/tcp
+    - 61613:61613/tcp
+  agent:
+    image: evenpay-agent:test
+    network_mode: "host"
+    ports:
+    - 8192:8192/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - localhost:8190
+    - --
+    - sh
+    - entry.sh
+  task:
+    image: evenpay-task:test
+    network_mode: "host"
+    ports:
+    - 8194:8194/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - localhost:8190
+    - --
+    - sh
+    - entry.sh
+  mch:
+    image: evenpay-merchant:test
+    network_mode: "host"
+    ports:
+    - 8191:8191/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - localhost:8190
+    - --
+    - sh
+    - entry.sh
+  zookeeper:
+    image: zookeeper:3.4.9
+    network_mode: "host"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
+    ports:
+    - 2181:2181/tcp
+  service:
+    image: evenpay-service:test
+    network_mode: "host"
+    ports:
+    - 8190:8190/tcp
+    environment:
+      DUBBO_IP_TO_REGISTRY: '10.0.75.2'
+      DUBBO_PORT_TO_REGISTRY: 20880
+  pay:
+    image: evenpay-pay:test
+    network_mode: "host"
+    ports:
+    - 3020:3020/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - localhost:8190
+    - --
+    - sh
+    - entry.sh
+  mgr:
+    image: evenpay-manage:test
+    network_mode: "host"
+    ports:
+    - 8193:8193/tcp
+    command:
+    - ./wait.sh
+    - -t
+    - '120'
+    - localhost:8190
+    - --
+    - sh
+    - entry.sh
+  redis:
+    image: redis
+    network_mode: "host"
+    ports:
+    - 6379:6379/tcp
+    command:
+    - redis-server
+    - /usr/local/etc/redis.conf
+    volumes:
+    - ./redis-data:/data
+    - ./redis.conf:/usr/local/etc/redis.conf
+    command:
+    - redis-server

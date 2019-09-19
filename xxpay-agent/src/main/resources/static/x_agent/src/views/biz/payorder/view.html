@@ -215,7 +215,7 @@
                     if(res.data.expireTime != "" && res.data.expireTime != null) {
                         $('#expireTime').val(layui.util.toDateString(res.data.expireTime));
                     }
-                    if(res.data.paySuccTime != "" && res.data.paySuccTime != null) {
+                    if(res.data.paySuccTime != "" && res.data.status != 5 && res.data.paySuccTime != null) {
                         $('#paySuccTime').val(layui.util.toDateString(res.data.paySuccTime));
                     }
                     if(res.data.createTime != "" && res.data.createTime != null) {

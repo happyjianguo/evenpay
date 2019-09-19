@@ -94,12 +94,15 @@ public class PayOrderController extends BaseController {
         Map allMap = rpcCommonService.rpcPayOrderService.count4All(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
         Map successMap = rpcCommonService.rpcPayOrderService.count4Success(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
         Map failMap = rpcCommonService.rpcPayOrderService.count4Fail(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
+        Map dedutionMap = rpcCommonService.rpcPayOrderService.count5Dedution(null, mchId, productId, payOrderId, mchOrderNo, productType, createTimeStartStr, createTimeEndStr);
 
         JSONObject obj = new JSONObject();
         obj.put("allTotalCount", allMap.get("totalCount"));                         // 所有订单数
         obj.put("allTotalAmount", allMap.get("totalAmount"));                       // 总金额
         obj.put("successTotalCount", successMap.get("totalCount"));                 // 成功订单数
         obj.put("successTotalAmount", successMap.get("totalAmount"));               // 成功金额
+        obj.put("successTotalDedution", dedutionMap.get("totalAmount"));               // 扣量金额
+        obj.put("successDedutionCount", dedutionMap.get("totalCount"));               // 扣量金额
         obj.put("successTotalMchIncome", successMap.get("totalMchIncome"));         // 成功商户收入
         obj.put("successTotalAgentProfit", successMap.get("totalAgentProfit"));     // 成功代理商利润
         obj.put("successTotalPlatProfit", successMap.get("totalPlatProfit"));       // 成功平台利润

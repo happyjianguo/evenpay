@@ -1013,6 +1013,24 @@
     <if test="createTimeEnd != null"> AND CreateTime &lt;= #{createTimeEnd} </if>;
   </select>
 
+  <!-- 统计扣量订单 -->
+  <select id="count5Dedution" resultType="java.util.Map" parameterType="java.util.Map" >
+    SELECT
+    SUM(Amount) AS totalAmount,
+    COUNT(1) AS totalCount
+    FROM t_pay_order
+    WHERE Status IN(5)
+    <if test="agentId != null"> AND agentId = #{agentId} </if>
+    <if test="mchId != null"> AND mchId = #{mchId} </if>
+    <if test="productId != null"> AND productId = #{productId} </if>
+    <if test="payOrderId != null"> AND PayOrderId = #{payOrderId} </if>
+    <if test="mchOrderNo != null"> AND MchOrderNo = #{mchOrderNo} </if>
+    <if test="productType != null"> AND ProductType = #{productType} </if>
+    <if test="createTimeStart != null"> AND CreateTime &gt;= #{createTimeStart} </if>
+    <if test="createTimeEnd != null"> AND CreateTime &lt;= #{createTimeEnd} </if>;
+  </select>
+
+
   <!--时间范围订单成功率（按天显示）-->
   <select id="daySuccessRate" resultType="java.util.Map" parameterType="java.util.Map" >
     SELECT b.dateType, IFNULL(a.successCount / b.totalCount,0) AS successRate, IFNULL(a.successCount,0) AS successCount, b.totalCount FROM
