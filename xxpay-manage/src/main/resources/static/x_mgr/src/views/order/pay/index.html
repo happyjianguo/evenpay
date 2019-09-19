@@ -62,9 +62,11 @@
             <div class="layui-form-item">
               <blockquote class="layui-elem-quote" id="amountTip">
                 提交订单数:<sapn id="allTotalCount" style="color: blue; margin-right: 10px;"></sapn>
+                扣量订单数:<sapn id="successDedutionCount" style="color: blue; margin-right: 10px;"></sapn>
                 订单总金额:<span id="allTotalAmount" style="color: blue; margin-right: 10px;"></span>
                 已付订单数:<span id="successTotalCount" style="color: green; margin-right: 10px;"></span>
                 已付总金额:<span id="successTotalAmount" style="color: green; margin-right: 10px;"></span>
+                已扣量金额:<span id="successTotalDedution" style="color: purple; margin-right: 10px;"></span>
                 商户总收入:<span id="successTotalMchIncome" style="color: green; margin-right: 10px;"></span>
                 代理商收入:<span id="successTotalAgentProfit" style="color: green; margin-right: 10px;"></span>
                 平台收入:<span id="successTotalPlatProfit" style="color: green; margin-right: 10px;"></span>
@@ -125,6 +127,8 @@ layui.use(['admin', 'table', 'util', 'laydate'], function(){
           $('#allTotalAmount').html("￥" + res.data.allTotalAmount/100.00);
           $('#successTotalCount').html(res.data.successTotalCount);
           $('#successTotalAmount').html("￥" + res.data.successTotalAmount/100.00);
+          $('#successTotalDedution').html("￥" + res.data.successTotalDedution/100.00);
+          $('#successDedutionCount').html(res.data.successDedutionCount);
           $('#successTotalMchIncome').html("￥" + res.data.successTotalMchIncome/100.00);
           $('#successTotalAgentProfit').html("￥" + res.data.successTotalAgentProfit/100.00);
           $('#successTotalPlatProfit').html("￥" + res.data.successTotalPlatProfit/100.00);

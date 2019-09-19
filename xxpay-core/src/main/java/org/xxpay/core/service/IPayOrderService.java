@@ -117,6 +117,9 @@ public interface IPayOrderService {
 
     Map count4Fail(Long agentId, Long mchId, Long productId, String payOrderId, String mchOrderNo, Byte productType, String createTimeStart, String createTimeEnd);
 
+
+    Map count5Dedution(Long agentId, Long mchId, Long productId, String payOrderId, String mchOrderNo, Byte productType, String createTimeStart, String createTimeEnd);
+
     List<Map> daySuccessRate(int offset, int limit, String createTimeStart, String createTimeEnd, Long mchId);
 
     List<Map> hourSuccessRate(int offset, int limit, String createTimeStart, String createTimeEnd, Long mchId);
@@ -154,5 +157,4 @@ public interface IPayOrderService {
      * @return
      */
     PayOrder findByAmount(Long amount, String rightCardNo, Long payTimeOut);
-
 }
