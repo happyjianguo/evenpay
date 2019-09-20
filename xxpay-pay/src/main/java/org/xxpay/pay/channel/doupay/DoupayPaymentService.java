@@ -67,7 +67,7 @@ public class DoupayPaymentService extends BasePayment {
         }
 
         post.put("order_time", time);
-        post.put("product_name", "test");
+        post.put("product_name", payOrder.getSubject());
         post.put("client_ip", "222.240.116.55");
         try {
             String sign = PayDigestUtil.getRSASign(post,payChannelConfig.getKey());
