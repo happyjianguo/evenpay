@@ -50,6 +50,7 @@ public class PayConstant {
 	public final static String CHANNEL_NAME_KUXIONG = "kuxiong";//酷熊
 	public final static String CHANNEL_NAME_DRAGONPAY = "dragonpay";//龙支付
 	public final static String CHANNEL_NAME_DOUPAY = "doupay";//都支付
+	public final static String CHANNEL_NAME_YXPAY = "yxpay";//优信支付
 
 
 	public final static String PAY_CHANNEL_SWIFTPAY_WXPAY_NATIVE = CHANNEL_NAME_SWIFTPAY + "_wxpay_native";			// 威富通微信扫码
